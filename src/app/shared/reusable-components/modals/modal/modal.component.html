@@ -1,0 +1,20 @@
+<!-- <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" *ngIf="config.isOpen" (click)="onOutsideClick($event)" > -->
+<div (click)="onOutsideClick($event)"  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-40 p-3 overflow-y-auto " *ngIf="config.isOpen" >
+  <div #modalContainer [ngClass]="'text-gray-900 my-16 animate-modal-in bg-white rounded-lg max-h-screen shadow-lg w-full max-w-' + config.width" (click)="$event.stopPropagation()" >
+    
+    <div class="flex justify-between items-center p-8">
+      <div class="text-lg font-bold">{{ config.title }}</div>
+      <div type="button" (click)="closeModal()" class="text-gray-600 text-xl px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200">&times;</div>
+    </div>
+
+    <div>
+      <ng-container *ngComponentOutlet="currentComponent"></ng-container>
+    </div>
+
+    <div *ngIf="config.withActions" class="flex justify-end space-x-4 pt-4 border-emerald-100 border-t">
+      <button (click)="closeModal()" [ngClass]="{ 'bg-red-600 text-white': config.closeStatus === 'error', 'bg-accent text-white': config.closeStatus === 'warning', 'bg-emerald-500 text-white': config.closeStatus === 'info' || config.closeStatus === 'success', 'bg-gray-300 text-gray-900': config.closeStatus === 'default' || !config.closeStatus}" class="px-4 py-2 rounded">{{ config.closeLabel || 'No, cancel' }}</button>
+      <button (click)="config.okAction(); closeModal()" [ngClass]="{'bg-red-600': config.status === 'error','bg-accent': config.status === 'warning','bg-emerald-500': config.status === 'info' || config.status === 'success' || !config.status }" class="px-4 py-2 text-white rounded">{{ config.okLabel || 'Yes, confirm' }}</button>
+    </div>
+    
+  </div>
+</div>

@@ -1,0 +1,219 @@
+<div class="min-h-screen bg-gray-50 py-20 lg:px-12 px-6">
+  <div class="lg:max-w-8xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Hello {{user?.first_name}}!</h1>
+        <p class="text-sm text-gray-500">
+          Here's what's happening
+        </p>
+      </div>
+
+      <div *ngIf="user?.user_role.includes('admin')" class="flex gap-3">
+        <button
+          class="px-4 py-2 bg-white border rounded-xl shadow text-sm transition-all duration-200 ease-in-out hover:shadow-md hover:scale-105 active:scale-95">
+          Import Data
+        </button>
+        <button
+          class="px-4 py-2 bg-emerald-700 text-white rounded-xl text-sm transition-all duration-200 ease-in-out hover:bg-emerald-800 hover:shadow-md hover:scale-105 active:scale-95">
+          + Add Lecturer
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Lecturers Overview -->
+    <div *ngIf="user?.user_role.includes('admin')" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      <div class="bg-emerald-700 text-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm">Total Lecturers</span>
+        <span class="text-4xl font-bold">{{ fetchedData?.lecturers?.total }}</span>
+        <span class="text-xs mt-1">Across all departments</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Male</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lecturers?.male }}</span>
+        <span class="text-xs text-gray-600 mt-1">Across all departments</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Female</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lecturers?.female }}</span>
+        <span class="text-xs text-gray-600 mt-1">Across all departments</span>
+      </div>
+
+    </div>
+
+    <!-- Lessons Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+      <div class="bg-yellow-500 text-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm">{{user?.user_role === 'lecturer' ? 'Your' : ''}} Total Lessons</span>
+        <span class="text-4xl font-bold">{{ fetchedData?.lessons?.total }}</span>
+        <span class="text-xs mt-1">Accross All Departments</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Lessons Attended</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.attended?.count }}</span>
+        <span class="text-xs text-emerald-600 mt-1">{{ fetchedData?.lessons?.attended?.change }}</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Lessons Missed</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.missed.count }}</span>
+        <span class="text-xs text-yellow-600 mt-1">{{ fetchedData?.lessons?.missed.status }}</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Lessons Swapped</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.swapped.count }}</span>
+        <span class="text-xs text-red-600 mt-1">{{ fetchedData?.lessons?.swapped.status }}</span>
+      </div>
+
+    </div>
+
+    <!-- Today's Lessons -->
+    <div class="grid grid-cols-1 {{user?.user_role.includes('admin') ? 'md:grid-cols-5' : 'md:grid-cols-4'}} gap-4">
+
+      <div class="bg-gray-200 text-emerald-700 rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm">Today's Lessons</span>
+        <span class="text-4xl font-bold">{{ fetchedData?.lessons?.today?.total }}</span>
+        <span class="text-xs mt-1">Accross All Departments</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Lessons Attended</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.today?.attended?.count }}</span>
+        <span class="text-xs text-emerald-600 mt-1">{{ fetchedData?.lessons?.today?.attended?.percent }}% of Today's total</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Lessons Missed</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.today?.missed.count }}</span>
+        <span class="text-xs text-red-600 mt-1">{{ fetchedData?.lessons?.today?.missed.percent }}% of Today's total</span>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Ongoing</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.today?.ongoing?.count }}</span>
+        <span class="text-xs text-yellow-600 mt-1">{{ fetchedData?.lessons?.today?.ongoing?.percent }}% of Today's total</span>
+      </div>
+
+      <div *ngIf="user?.user_role.includes('admin')" class="bg-white rounded-2xl p-6 shadow flex flex-col">
+        <span class="text-sm text-gray-500">Pending</span>
+        <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.today?.pending?.count }}</span>
+        <span class="text-xs text-yellow-600 mt-1">{{ fetchedData?.lessons?.today?.pending?.percent }}% of Today's total</span>
+      </div>
+
+    </div>
+
+    <!-- Middle Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      <!-- Attendance Analytics -->
+      <div *ngIf="user?.user_role !== 'course_rep'" class="bg-white rounded-2xl p-6 shadow">
+        <h2 class="text-sm font-medium text-gray-700 mb-4">Attendance Analytics</h2>
+
+        <div class="h-64">
+          <canvas baseChart [data]="attendanceChartData" [options]="attendanceChartOptions" chartType="bar"></canvas>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-3">Attendance trends (Mon – Sat)</p>
+      </div>
+
+      <!-- Attendance Progress -->
+      <div *ngIf="user?.user_role !== 'course_rep'" class="bg-white rounded-2xl p-6 shadow flex flex-col items-center justify-center">
+        <h2 class="text-sm font-medium text-gray-700 mb-4">Attendance Progress</h2>
+        <div class="relative w-32 h-32">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle cx="50%" cy="50%" r="45%" stroke="#E5E7EB" stroke-width="10" fill="transparent" />
+            <circle cx="50%" cy="50%" r="45%" stroke="#16A34A" stroke-width="10" fill="transparent" stroke-dasharray="283" [attr.stroke-dashoffset]="283 - (fetchedData?.attendanceProgress?.percent / 100 * 283)" stroke-linecap="round" />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-xl font-semibold">{{ fetchedData?.attendanceProgress?.percent }}%</span>
+          </div>
+        </div>
+        <p class="mt-2 text-sm text-gray-500">Overall Attendance</p>
+      </div>
+
+      <!-- Logs -->
+      <div class="bg-white rounded-2xl p-6 shadow space-y-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-sm font-medium text-gray-700">Recent Logs</h2>
+          <button
+            class="text-emerald-700 text-sm transition-all duration-200 ease-in-out hover:text-emerald-900 hover:underline active:scale-95">
+            View All
+          </button>
+        </div>
+        <ul class="space-y-3 text-sm">
+          <li *ngFor="let log of fetchedData?.logs" class="flex justify-between">
+            <span>{{ log.message }}</span>
+            <span [ngClass]="{ 'text-gray-500': log.type === 'normal' || log.type === 'info', 'text-red-500': log.type === 'warning'}">{{ log.date }}</span>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Upcoming Lessons -->
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col justify-between space-y-6">
+        <div class="space-y-6">
+          <h2 class="text-sm font-medium text-gray-700 mb-2">Upcoming Lessons</h2>
+          <ul class="space-y-3 text-sm">
+            <li *ngFor="let lesson of fetchedData?.upcomingLessons">
+              <span class="font-medium">{{ lesson.lecturer }}</span> — {{ lesson?.subject }}
+              <span class="block text-xs text-gray-500">{{ lesson?.time }}</span>
+            </li>
+          </ul>
+        </div>
+        <button
+          class="mt-4 px-4 py-2 bg-emerald-700 text-white rounded-xl text-sm transition-all duration-200 ease-in-out hover:bg-emerald-800 hover:scale-105 active:scale-95">
+          View All Lessons
+        </button>
+      </div>
+
+      <!-- Lecturer Monitoring -->
+      <div *ngIf="user?.user_role.includes('admin')" class="bg-white rounded-2xl p-6 shadow space-y-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-sm font-medium text-gray-700">Lecturer Monitoring</h2>
+          <button
+            class="text-sm text-emerald-700 transition-all duration-200 ease-in-out hover:text-emerald-900 hover:underline active:scale-95">
+            View All
+          </button>
+        </div>
+        <ul class="space-y-3 text-sm">
+          <li *ngFor="let item of fetchedData?.monitor" class="flex items-center justify-between">
+            <div>
+              <p class="font-medium">{{ item.name }}</p>
+              <p class="text-xs text-gray-500">{{ item.note }}</p>
+            </div>
+            <span class="px-2 py-1 rounded text-xs" [ngClass]="{ 'bg-emerald-100 text-emerald-700': item.status === 'Active', 'bg-red-100 text-red-700': item.status === 'Warning', 'bg-yellow-100 text-yellow-700': item.status === 'Moderate'}">
+              {{ item.status }}
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Ongoing Class Tracker -->
+      <div *ngIf="!user?.user_role.includes('admin')" class="bg-emerald-900 text-white rounded-2xl p-6 shadow flex flex-col items-center justify-center">
+        <h2 class="text-sm font-medium mb-4">Ongoing Class</h2>
+        <div class="text-3xl font-bold mb-4">{{ fetchedData?.ongoingClass?.time }}</div>
+        <p class="text-sm mb-4">{{ fetchedData?.ongoingClass?.lecturer }} — {{ fetchedData?.ongoingClass?.subject }}</p>
+        <div class="flex gap-4">
+          <button
+            class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center transition-transform duration-200 ease-in-out hover:bg-emerald-800 hover:scale-110 active:scale-95">
+            ⏸
+          </button>
+          <button
+            class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center transition-transform duration-200 ease-in-out hover:bg-red-700 hover:scale-110 active:scale-95">
+            ■
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

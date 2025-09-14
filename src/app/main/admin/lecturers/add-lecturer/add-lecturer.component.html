@@ -1,0 +1,141 @@
+  <div class="space-y-4 pb-24 p-3 lg:p-8 mt-8 lg:mt-16">
+
+    <!-- Upper Section -->
+    <!-- <div class="flex justify-between px-1 items-center">
+      <div class="text-2xl font-medium text-gray-800">Lecturer Onboarding Form:</div>
+    </div> -->
+
+    <!-- Form --> 
+    <div class="space-y-6 my-4 rounded-md z-0">
+
+      <div class="collapse collapse-arrow bg-white rounded-md overflow-visible lg:shadow">
+        
+        <input type="checkbox" class="peer" checked disabled />
+        
+        <div class="collapse-title">
+          <p class="text-md leading-5 text-emerald-700 mb-3 lg:col-span-1 pl-3 lg:pl-8 my-3">Lecturer Information:</p>
+        </div>
+        
+        <div class="collapse-content">
+
+          <div class="items-center space-x-4 px-8  flex justify-end ">              
+              <img [src]="displayImage" alt="Image" class="w-16 h-16 rounded-lg shadow-md">
+              <div>
+                <button (click)="openUploadModal()" class="text-sm px-4 py-2.5 text-emerald-700 bg-emerald-100 rounded-lg hover:bg-emerald-100">
+                  Change image
+                </button>
+                <p class="text-xs text-gray-500 mt-1">JPG or PNG. 1MB max.</p>
+              </div>
+          </div>
+
+          <div class="lg:col-span-3 lg:grid gap-6 lg:grid-cols-2 p-3 lg:p-8 pt-3 space-y-4 lg:space-y-0">
+
+            <div class="lg:col-span-1">              
+              <label class="flex justify-between items-center">
+                <label for="lecturer_id" class="font-medium block text-sm text-slate-900">Lecturer ID <span *ngIf="lastLecturerId" class="text-slate-500 text-sm"> (Last ID - {{lastLecturerId}}):</span> </label>
+                <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
+              </label>
+              <div class="mt-1">
+                <input type="text" id="lecturer_id" disabled required name="lecturer_id" placeholder="Input prefered lecturer ID" [(ngModel)]="lecturer.lecturer_id" autocomplete="false" class="{{lecturer.lecturer_id ? 'font-bold' : ''}} bg-emerald-50 placeholder:text-sm appearance-none min-w-0 w-full border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+              </div>
+            </div>
+
+            <div class="lg:col-span-1">
+              <label class="flex justify-between items-center">
+                <label for="first_name" class="block text-sm text-gray-700">First Name </label>
+                <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
+              </label>              
+              <div class="mt-1">
+                <input type="text" required name="first_name" placeholder="eg. Simon" [(ngModel)]="lecturer.first_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+              </div>
+            </div>
+
+            <div class="lg:col-span-1">
+              <label class="flex justify-between items-center">
+                <label for="last_name" class="block text-sm text-gray-700">Last Name </label>
+                <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
+              </label>                    
+              <div class="mt-1">
+                <input type="text" required name="last_name" placeholder="eg. Peter" [(ngModel)]="lecturer.last_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+              </div>
+            </div>
+
+            <div class="lg:col-span-1">
+              <label for="other_names" class="block text-sm text-gray-700">Other Name(s) </label>
+              <div class="mt-1">
+                <input type="text" name="other_names" placeholder="eg. Cephas" [(ngModel)]="lecturer.other_names" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+              </div>
+            </div>
+
+            <div class="lg:col-span-1">              
+              <label class="flex justify-between items-center">
+                <label for="gender" class="block text-sm text-gray-700">Gender </label>
+                <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
+              </label>
+              <div class="-mt-0.5">
+                <app-select-input id="gender" [selectInputData]="{ items: ['Male', 'Female'], placeholder: 'Select Gender', defaultValue: 'Male', autoClose: true }" (selectionChanged)="onSelectionChanged('gender', $event)"></app-select-input>
+              </div>
+            </div>
+
+            <div class="lg:col-span-1">
+              <label for="nationality" class="block text-sm text-gray-700">Nationality </label>
+              <div class="mt-1">
+                <app-select-input id="nationality" *ngIf="refreshSelect" [selectInputData]="{ items: initData?.countries ?? ['Ghana'], placeholder: 'Select Nationality', displayProperty: 'native', searchProperty: 'native', autoClose: true }" (selectionChanged)="onSelectionChanged('nationality', $event)"></app-select-input>
+              </div>
+            </div>
+
+            <div class="lg:col-span-1">
+              <label class="flex justify-between items-center">
+                <label for="phone1" class="block text-sm text-gray-700"> Phone Number 1</label>
+              </label>
+              <div class="mt-1">
+                <input type="text" id="phone1" name="phone1" placeholder="eg. (+233)-234-56-788" [(ngModel)]="lecturer.phone1" autocomplete="false" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+              </div>            
+            </div>
+
+            <div class="lg:col-span-1">
+              <label class="flex justify-between items-center">
+                <label for="phone2" class="block text-sm text-gray-700"> Phone Number 2</label>
+              </label>
+              <div class="mt-1">
+                <input type="text" id="phone2" name="phone2" placeholder="eg. (+233)-234-56-788" [(ngModel)]="lecturer.phone2" autocomplete="false" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+              </div>            
+            </div>
+
+            <div class="lg:col-span-1">
+              <label class="flex justify-between items-center">
+                <label for="email" class="block text-sm text-gray-700">Email</label>
+              </label>
+              <div class="mt-1">
+                <input type="text" id="email" name="email" placeholder="eg. abc@gmail.com" [(ngModel)]="lecturer.email" autocomplete="false" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+              </div>            
+            </div>
+
+            <div class="lg:col-span-1">
+              <label for="lecturer_groups" class="block text-sm text-gray-700">Assign Group(s) </label>
+              <div class="mt-1">
+                <app-select-input *ngIf="refreshSelect" id="lecturer_groups" [selectInputData]="{ items: initData?.lecturer_groups, multiple: true, placeholder: 'Select Group(s)', displayProperty: 'name', searchProperty: 'name'}" (selectionChanged)="onSelectionChanged('lecturer_groups', $event)"></app-select-input>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      <p></p>
+
+      <!-- Action buttons -->
+      <div class="flex border-emerald-100 py-4 px-2 mx-8 border-t justify-end space-x-6">
+        <button type="submit" (click)="reset()" class="hover:-translate-y-px hover:shadow-xs active:opacity-85 tracking-tight-rem transition-all bg-gray-50 ease-in-out border border-transparent rounded-md hover:shadow-sm px-10 py-3 flex items-center justify-center text-sm font-medium text-red-700 border-red-200 hover:bg-gray-100">
+          Reset
+        </button>
+        <button type="submit" (click)="saveLecturer()" class="hover:-translate-y-px hover:shadow-xs active:opacity-85 tracking-tight-rem transition-all ease-in-out bg-emerald-700 border border-transparent rounded-md hover:shadow-sm px-6 py-3 flex items-center justify-center text-sm font-medium text-white hover:bg-emerald-700">
+          Submit
+        </button>
+      </div>
+
+      </div>
+      
+
+    </div>
+    
+  </div>

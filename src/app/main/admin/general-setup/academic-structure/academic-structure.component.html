@@ -1,0 +1,14 @@
+<div class="min-h-screen w-full bg-base-50 ">
+
+  <div class="bg-white mt-16">
+    <app-tabs [tabsData]="tabsData" (switchForm)="switchForm($event)"></app-tabs>
+  </div>
+
+  <div class="py-1 bg-gray-50">
+    <app-faculties *ngIf="page === 1"></app-faculties>
+    <app-departments *ngIf="page === 2"></app-departments>
+    <app-academic-levels *ngIf="page === 3"></app-academic-levels>
+    <app-courses *ngIf="page === 4"></app-courses>
+  </div>
+
+</div>

@@ -1,0 +1,93 @@
+<div class="min-h-screen w-screen">
+
+    <!-- Sidebar -->
+    <div  class="z-40 inset-y-0 left-0 w-64 bg-emerald-700 transform md:translate-x-0 transition-transform duration-200 ease-in-out {{ isSidebarOpen ? 'animate-slide-in-left1 fixed' : 'animate-slide-out-left1 hidden'}}">
+        
+        <div class="flex-1 pt-6 pb-0 lg:pb-3 p-3">
+            <a href="/" class="btn btn-ghost text-xl space-x-2 text-white">            
+                <img class="h-10 w-auto rounded-full" src="favicon.ico" alt="">
+                <span class="whitespace-nowrap">Time Table App</span>
+            </a>
+        </div>
+
+        <ul class="menu px-4 w-full space-y-1 text-emerald-100">
+            <div (click)="item?.subPages?.length === 0 ? getPage(item.page) : ''" *ngFor="let item of menu; let i = index" (click)="setActiveIndex(i)" [ngClass]="{ 'border border-emerald-700 bg-emerald-50 rounded-lg': activeIndex === i, 'hover:bg-emerald-50 hover:text-emerald-500 hover:rounded-lg hover:shadow': activeIndex !== i && item.subPages.length < 1}" class="w-full {{item.subPages?.length > 0 ? 'collapse-arrow collapse' : ''}} cursor-pointer">
+                <input *ngIf="item.subPages?.length > 0 " type="radio" type="radio" name="accordion" [checked]="activeIndex === i" />
+                <div class="collapse-title font-semibold {{item.is_active && activeIndex === i ? 'text-emerald-700' : !item.is_active && activeIndex === i ? 'text-emerald-500 hover:text-emerald-500' : 'text-emerald-100 hover:text-emerald-500'}}">{{item.pageName}}</div>
+                <div *ngIf="item?.subPages?.length > 0" class="collapse-content text-sm px-4">
+                    <div *ngFor="let subItem of item.subPages" (click)="subItem.isModal ? openModal(subItem) : getPage(subItem.page)"  class="cursor-pointer p-2 {{subItem.is_active ? 'text-emerald-700' : 'text-gray-500'}}">
+                        {{subItem.pageName}}
+                    </div>
+                </div>
+            </div>
+        </ul>
+
+        <div [ngClass]="{ 'border border-emerald-700 bg-emerald-50': activeIndex === 9, 'hhover:shadow': activeIndex !== 9}" class="w-full collapse-arrow collapse cursor-pointer absolute bottom-0 bg-emerald-600 rounded-none rounded-t-2xl">
+            <input type="radio" type="radio" name="accordion" [checked]="activeIndex === 9" />
+            <div class="collapse-title {{activeIndex === 9 ? 'text-white' : 'text-emerald-100'}}">
+                <div class="flex justify-start space-x-2 items-center">
+                    <div class="w-6 rounded-full">
+                        <img alt="image" [src]="currUser.photo" />
+                    </div>
+                    <span>{{currUser.first_name + ' ' + currUser.last_name}}</span>
+                </div>
+            </div>
+            <div class="collapse-content text-sm px-4">
+                <div *ngFor="let item of userMenu" (click)="item.isModal ? openModal(item) : getPage(item.page); setActiveIndex(9)"  class="cursor-pointer p-2 {{item.is_active ? 'text-white' : 'text-emerald-200'}}">
+                    {{item.pageName}}
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <!-- Overlay (mobile) -->
+    <div *ngIf="isSidebarOpen" class="z-30 fixed inset-0 bg-black opacity-50 lg:hidden" (click)="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col {{isSidebarOpen ? 'lg:ml-60' : ''}}">
+        
+        <!-- Navbar -->
+        <div class="fixed w-full navbar bg-white z-20 lg:shadow-sm lg:space-x-2 {{isSidebarOpen ? 'lg:pr-64' : ''}}">
+
+            <div *ngIf="!isSidebarOpen" class="hidden lg:flex items-center">
+                <a href="/" class="btn btn-ghost text-xl  space-x-1">            
+                    <img class="h-10 w-auto rounded-full" src="favicon.ico" alt="">
+                    <span>Time Table</span>
+                </a>
+            </div>
+
+            <button class="btn btn-ghost btn-lg -ml-2 lg:ml-0" (click)="toggleSidebar()"> <div class="text-xl" >☰</div> </button>
+
+            <div class="flex-1"> {{pageName}} </div>
+
+            <div class="flex {{isSidebarOpen ? 'lg:pr-2' : ''}}">
+                
+                
+                <div class="dropdown dropdown-end">
+                    
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                        <div class="w-10 rounded-full">
+                            <img alt="userImg" [src]="currUser.photo" />
+                        </div>
+                    </div>
+
+                    <ul tabindex="0" class="menu menu-sm dropdown-content bg-gray-50 rounded-box mt-3 w-44 p-2 shadow">
+                        <li *ngFor = "let item of userMenu" (click)="getPage(item.page);" [ngClass]="item.is_active ? 'text-emerald-700' : ''"><a>{{item.pageName}}</a></li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Page Content -->
+        <div class="overflow-y-auto flex-1">
+            <router-outlet></router-outlet>
+        </div>
+
+    </div>
+
+</div>

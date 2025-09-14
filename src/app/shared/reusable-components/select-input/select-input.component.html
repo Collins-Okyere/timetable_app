@@ -1,0 +1,102 @@
+<div id="{{selectInputData?.displayProperty}}" class="relative {{selectInputData?.bgColor ? selectInputData?.bgColor : 'bg-white}}">  
+  
+  <button *ngIf="selectInputData?.multiple" type="button"  [ngClass]="{ 'outline-red-500 border-red-500': selectInputData?.toastData?.status == 'error' && !selectInputData?.disabled, 'outline-yellow-500 border-yellow-500': !selectedItem && selectInputData?.toastData?.status == 'warning' && !selectInputData?.disabled, 'outline-gray-300': selectInputData?.toastData?.status != 'error' && selectInputData?.toastData?.status != 'warning', 'bg-gray-100': selectInputData?.disabled, 'bg-white': !selectInputData?.disabled }" class="flex flex-col w-full cursor-default rounded-md py-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 {{!selectInputData?.disabled ? 'focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-emerald-700' : ''}} sm:text-sm" aria-haspopup="listbox" [attr.aria-expanded]="dropdownOpen"> 
+    
+    <div (click)="toggleDropdown()" class="col-start-1 row-start-1 justify-between flex items-center gap-3 w-full px-2">
+
+      <span class="flex items-center pr-6">
+
+        <span *ngIf="selectedItems.length > 0" class="flex gap-1 flex-wrap">
+          <span *ngFor="let item of selectedItems" class="inline-flex items-center whitespace-nowrap gap-1.5 bg-emerald-50 text-emerald-700 rounded-full py-0.5 px-2.5 text-sm">
+          
+            <img *ngIf="item.photo ?? item.flag ?? item.image ?? item.logo" [src]="item.photo ?? item.image ?? item.flag ?? item.logo" alt="image" class="size-6 shrink-0 rounded-full"/>
+
+            <span>{{ item[selectInputData?.displayProperty] || item.name || item.title || item.native || item || selectInputData?.placeholder | capitalizeWords}}</span>
+            
+            <button type="button" (click)="removeItem(item)" class="text-red-600 hover:text-red-800">
+              <svg class="h-2 w-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 1.414L8.414 12l5.293 5.293a1 1 0 01-1.414 1.414L7 13.414l-5.293 5.293a1 1 0 01-1.414-1.414L5.586 12 0.293 6.707a1 1 0 011.414-1.414L7 10.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+            
+          </span>
+        </span>
+
+        <span [ngClass]="selectedItems.length > 0 ? 'hidden' : ''" class="block truncate text-gray-500">{{ selectInputData?.placeholder }}</span>
+
+      </span>
+    
+      <svg *ngIf="!dropdownOpen && selectedItems.length === 0 && !selectInputData?.disabled" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd"/>
+      </svg>
+
+    </div>
+    
+    <input *ngIf="selectInputData?.items?.length > 5 && selectInputData?.searchable && selectedItems.length === 0 && !selectInputData?.disabled && dropdownOpen" type="text" [(ngModel)]="searchQuery" [disabled]="selectInputData?.disabled" (input)="filterItems()" class="w-full bg-gray-50 p-2 pl-4 pr-9 text-gray-500 {{selectInputData?.noOutline ? ' pl-8 rounded' : 'rounded-md' }}sm:text-sm outline-none border-none" placeholder="Scroll / Search here"/>
+
+  </button>
+                  
+  <button *ngIf="!selectInputData?.multiple" type="button"  [ngClass]="{ 'outline-red-500 border-red-500': selectInputData?.toastData?.status == 'error' && !selectInputData?.disabled, 'outline-yellow-500 border-yellow-500': !selectedItem && selectInputData?.toastData?.status == 'warning' && !selectInputData?.disabled, 'outline-gray-300': selectInputData?.toastData?.status != 'error' && selectInputData?.toastData?.status != 'warning', 'bg-gray-50': selectInputData?.disabled, 'bg-white': !selectInputData?.disabled }" class="w-full cursor-default {{selectInputData?.searchable && dropdownOpen ? 'p-0 m-0' : 'py-2.5'}} {{selectInputData?.items?.length > 5 && !selectInputData?.disabled && dropdownOpen ? 'py-0 flex justify-between items-center': 'px-4'}}  text-left text-gray-900  {{selectInputData.noOutline && selectInputData?.disabled ? 'rounded' : 'outline outline-1 -outline-offset-1 outline-gray-300 rounded-md'}} {{!selectInputData?.disabled ? 'focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-emerald-700' : 'py-2.5'}} sm:text-sm" aria-haspopup="listbox" [attr.aria-expanded]="dropdownOpen"> 
+    
+    <span *ngIf="!dropdownOpen || selectInputData?.disabled" class="justify-between flex items-center" (click)="toggleDropdown()">
+
+      <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
+        <img *ngIf="selectedItem?.photo ?? selectedItem?.flag ?? selectedItem?.logo ?? selectedItem?.image" [src]="selectedItem.photo ?? selectedItem.flag ?? selectedItem.logo ?? selectedItem.image" alt="" class="size-6 shrink-0 rounded-full"/>
+        <span class="block truncate {{selectedItem ? 'text-gray-900' : 'text-gray-500'}}">{{selectInputData.displayProperty === 'native' ? selectedItem?.native : selectedItem?.name ?? selectedItem?.title ?? selectedItem ?? selectInputData?.defaultValue ?? selectInputData?.placeholder  | capitalizeWords}} </span>
+      </span>
+
+      <svg *ngIf="!selectInputData?.disabled" class="col-start-1 row-start-1 size-5 self-center justify-self-end justify-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+        <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd"/>
+      </svg>            
+      
+      <button *ngIf="selectInputData?.clearable && selectedItem && !selectInputData?.disabled" type="button" (click)="clearSelection()" class="justify-end justify-self-end text-red-600 hover:text-red-800">
+        <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 1.414L8.414 12l5.293 5.293a1 1 0 01-1.414 1.414L7 13.414l-5.293 5.293a1 1 0 01-1.414-1.414L5.586 12 0.293 6.707a1 1 0 011.414-1.414L7 10.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+
+    </span>
+    
+    <!-- <input *ngIf="selectInputData?.items?.length > 5 && selectInputData?.searchable && !selectInputData?.disabled && dropdownOpen" type="text" [disabled]="selectInputData?.disabled" [(ngModel)]="searchQuery" (input)="filterItems()" class="w-full bg-gray-50 p-2.5 pl-4 text-gray-500 rounded-md sm:text-sm outline-none border-none" placeholder="Scroll / Search here"/> -->
+    <input *ngIf="!selectInputData?.disabled && dropdownOpen" type="text" [disabled]="selectInputData?.disabled" [(ngModel)]="searchQuery" (input)="filterItems()" class="w-full bg-white {{selectInputData?.searchable ? 'py-3' : ''}} text-gray-500 {{selectInputData.noOutline ? 'rounded pl-4' : 'pl-4 rounded-md'}} sm:text-sm outline-none border-none" placeholder="Scroll / Search here"/>
+
+  </button>
+  
+  <div *ngIf="dropdownOpen  && !selectInputData?.disabled" class="absolute z-50 min-w-full bg-gray-100 mt-1 shadow-lg rounded-md ring-1 ring-black/5 focus:outline-none">
+    
+    <label *ngIf="!dropdownOpen && selectedItems.length > 1" (click)="clearSelection()" class="cursor-pointer mt-1 mr-2 text-xs flex justify-end text-red-600 hover:text-red-800">
+      Clear All
+    </label>
+
+    <ul class="max-h-56 min-w-full overflow-auto bg-white py-1 text-gray sm:text-sm" role="listbox">
+      
+      <li *ngFor="let item of filteredItems" (click)="toggleItemSelection(item)" [class.selected]="selectedItems.includes(item) || selectedItem === item" [ngClass]="{ 'bg-emerald-50 font-semibold text-emerald-700': selectedItems.includes(item) || selectedItem === item, 'hover:bg-emerald-700 hover:text-white': true }" class=" whitespace-nowrap relative cursor-pointer select-none py-2 pl-3 pr-9 text-gray-900">
+        
+        <div class="flex items-center">
+          <img *ngIf="item?.photo || item?.flag || item?.image || item?.logo" [src]="item.photo || item.image || item.flag || item.logo" alt="" class="size-5 shrink-0 rounded-full" />
+          <span class="ml-3 block">{{ getDisplayText(item)  | capitalizeWords}}</span>
+        </div>
+
+        <span *ngIf="selectedItems.includes(item) || selectedItem === item" class="absolute inset-y-0 right-0 flex items-center pr-4 text-emerald-700">
+          <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>
+        </span>
+
+      </li>
+      
+    </ul>
+  
+    <div *ngIf="selectInputData?.multiple && selectedItems.length > 0" class="flex justify-end space-x-3 my-2 mr-4">
+    
+      <label (click)="toggleDropdown()" [ngClass]="{'hidden' : !dropdownOpen}" class="cursor-pointer m-1 text-xs flex justify-end text-emerald-700 hover:text-emerald-700">
+        Done
+      </label>
+  
+      <label (click)="clearSelection()" class="cursor-pointer m-1 text-xs flex justify-end text-red-600 hover:text-red-800">
+        Clear All
+      </label>
+  
+    </div>
+
+  </div>
+  
+</div>

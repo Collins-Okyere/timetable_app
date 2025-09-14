@@ -1,0 +1,61 @@
+
+<div class="relative h-screen w-full flex lg:flex lg:justify-end">
+
+    <!-- Background Image -->
+    <div class="absolute inset-0 bg-cover bg-center"
+        style="background-image: url('assets/background.jpg');">
+    </div>
+
+    <!-- emerald Overlay -->
+    <div class="absolute inset-0 bg-emerald-700 bg-opacity-60"></div>
+
+    <!-- Content -->
+    <div class="z-10 flex flex-col justify-center space-y-6 items-center h-full w-full lg:w-1/3 text-white px-4 lg:bg-white lg:bg-opacity-70">
+
+        <div class="w-full max-w-md lg:max-w-sm space-y-6 bg-white rounded-lg shadow-lg p-8 lg:pb-16 lg:px-12 ">
+
+            <div class="flex justify-center">
+                <img src="favicon.ico" alt="logo" class="h-12 w-auto">
+            </div>
+            
+            <div class="text-left">
+                <h2 class="text-2xl font-bold text-gray-900">Sign In</h2>
+                <!-- <p class="text-xs text-gray-600">
+                    Sign in to access your portal
+                </p> -->
+            </div>
+
+            <form (ngSubmit)="onSubmit()" class="space-y-6">
+
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" name="username" [(ngModel)]="user.username" required class="bg-white mt-1 block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-700" placeholder="your username" />
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="relative">
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="user.password" required class="bg-white mt-1 block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-700" placeholder="••••••••"/>
+                        <button type="button" (click)="showPassword = !showPassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-500">
+                            {{ showPassword ? 'Hide' : 'Show' }}
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                    Sign In
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- <div class="cursor-pointer text-center text-sm text-gray-500"> -->
+                <!-- Don’t have an account? -->
+                <!-- <a (click)="movePage('home')" class="text-emerald-700 hover:underline">Sign Up / Change Language</a>
+            </div> -->
+
+        </div>
+    </div>
+
+</div>

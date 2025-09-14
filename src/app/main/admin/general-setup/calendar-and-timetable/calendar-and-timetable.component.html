@@ -1,0 +1,12 @@
+<div class="min-h-screen w-full bg-base-50 ">
+
+  <div class="bg-white mt-16">
+    <app-tabs [tabsData]="tabsData" (switchForm)="switchForm($event)"></app-tabs>
+  </div>
+
+  <div class="py-1 bg-gray-50">
+    <app-calendars *ngIf="page === 1"></app-calendars>
+    <app-timetables *ngIf="page === 2"></app-timetables>
+  </div>
+
+</div>

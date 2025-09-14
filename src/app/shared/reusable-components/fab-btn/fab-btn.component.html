@@ -1,0 +1,6 @@
+<button class="bg-emerald-700 mb-12 z-10 group fixed bottom-4 right-2 text-white p-4 rounded-full shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-110" (mouseover)="isHovered = true" (mouseleave)="isHovered = false" (click)="onClick()">
+  <svg *ngIf="fabData.icon" [ngClass]="fabData.icon.color" [ngClass]="fabData.icon.class" class="h-7 w-7 group-hover:text-white" [attr.fill]="fabData.icon.fill || 'none'" [attr.viewBox]="fabData.icon.viewBox || '0 0 24 24'" [attr.stroke-width]="fabData.icon.strokeWidth || '1.5'" stroke="currentColor" aria-hidden="true">
+    <path [attr.d]="fabData.icon.path" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+</button>
+         
