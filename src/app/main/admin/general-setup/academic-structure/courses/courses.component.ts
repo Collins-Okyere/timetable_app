@@ -26,11 +26,8 @@ export class CoursesComponent implements OnInit {
         tag: 'Course',
         description: 'List of courses',
         allowAdd: true,
-        allowFilters: false,
-        filters: {
-          neededData: [...neededData],
-          filterBy: []
-        },
+        sortBy: 'name',
+        neededData: neededData,
         allowStatCards: true,
         pageSize: 15,
         stats: {

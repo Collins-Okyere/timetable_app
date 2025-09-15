@@ -62,8 +62,8 @@ export class SmartTableComponent implements OnInit {
   @Input() tableData:any
   Math  = Math
   filter: any = {
-    startDate: '',
-    endDate: '',
+    start_date: '',
+    end_date: '',
     organisation: null,
     project: null,
     beneficiary: null,
@@ -100,6 +100,7 @@ export class SmartTableComponent implements OnInit {
     this.menuOpen = false
     this.user = await this.api.safeJSONParse('currUser');
     this.initData();
+    console.log(this.tableData?.dataSet)
   }
 
   async initData() {
@@ -145,17 +146,17 @@ export class SmartTableComponent implements OnInit {
 
     let out = [...this.tableData?.dataSet];
 
-    if (this.filter.start_date) {
-      out = out.filter((d) => new Date(d?.start_date) >= new Date(this.filter.start_date));
-    }
-    if (this.filter.end_date) {
-      out = out.filter((d) => new Date(d?.end_date) <= new Date(this.filter.end_date));
-    }
+    // if (this.filter?.start_date) {
+    //   out = out.filter((d) => new Date(d?.start_date) >= new Date(this.filter?.start_date));
+    // }
+    // if (this.filter?.end_date) {
+    //   out = out.filter((d) => new Date(d?.end_date) <= new Date(this.filter?.end_date));
+    // }
 
     
     // search filter
-    if (this.filter.search) {
-      const q = this.filter.search.toLowerCase();
+    if (this.filter?.search) {
+      const q = this.filter?.search.toLowerCase();
       out = out.filter((d) =>
         this.keys.some((key) =>
           String(this.getFieldValue(d, key)).toLowerCase().includes(q)
@@ -221,7 +222,7 @@ export class SmartTableComponent implements OnInit {
   }
   
   onStartDateChange(date: string) {
-    if (this.filter.end_date && new Date(date) > new Date(this.filter.end_date)) {
+    if (this.filter?.end_date && new Date(date) > new Date(this.filter?.end_date)) {
       this.api.toast.showToast('Start date cannot be later than End date', 'warning');
       return;
     }
@@ -230,7 +231,7 @@ export class SmartTableComponent implements OnInit {
   }
 
   onEndDateChange(date: string) {
-    if (this.filter.start_date && new Date(date) < new Date(this.filter.start_date)) {
+    if (this.filter?.start_date && new Date(date) < new Date(this.filter?.start_date)) {
       this.api.toast.showToast('End date cannot be earlier than Start date', 'warning');
       return;
     }

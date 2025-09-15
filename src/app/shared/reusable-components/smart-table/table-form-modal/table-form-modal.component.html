@@ -1,5 +1,17 @@
-<div *ngIf="formData" class="z-50 fixed inset-0 flex items-center max-h-screen justify-center bg-black bg-opacity-50" (click)="formData.closeOnOutside ? onOutsideClick($event) : ''">
-  <form (ngSubmit)="onSubmit()" #TableForm="ngForm" class="animate-modal-in flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg w-full {{formData?.formFields?.length <= 4 ? 'max-w-lg' : formData?.formFields?.length > 8 ? 'max-w-7xl' : formData?.isMultiPart ? 'w-2/3 h-4/5' : 'max-w-3xl'}} min-h-[50vh] max-h-[95vh] overflow-y-auto" (click)="$event.stopPropagation()">
+<div *ngIf="formData" class="z-50 fixed inset-0 flex items-center max-h-screen justify-center bg-black bg-opacity-50" (click)="formData.closeOnOutside && onOutsideClick($event)">
+  <form (ngSubmit)="onSubmit()" #TableForm="ngForm" class="animate-modal-in flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg w-full {{formData?.isMultiPart ? 'w-4/5 h-4/5' :formData?.formFields?.length <= 4 ? 'max-w-lg' : formData?.formFields?.length > 8 ? 'max-w-7xl' : 'max-w-3xl'}} min-h-[50vh] max-h-[95vh] overflow-y-auto" (click)="$event.stopPropagation()">
+
+
+
+<!-- <form
+  (click)="$event.stopPropagation()"
+  (ngSubmit)="onSubmit()"
+  #TableForm="ngForm"
+  [ngClass]="formData?.isMultiPart 
+                ? 'w-full max-w-6xl h-[90vh]' 
+                : 'w-full max-w-lg'"
+  class="bg-white p-6 rounded-2xl shadow-xl overflow-y-auto transition-all duration-300"
+> -->
 
     <div class="h-full px-3">
 
@@ -89,7 +101,7 @@
 
 
         <!-- Timetable Only -->
-        <div *ngIf="!firstPage && formData?.tag === 'Timetable'">
+        <div *ngIf="!firstPage && formData?.tag === 'Timetable' && formData?.isEditable || formData?.tag === 'Timetable' && !formData?.isEditable">
           <div class="shadow pb-8 p-4 rounded-sm">
         
             <div class="flex justify-between pb-4">
@@ -100,11 +112,12 @@
         
               <thead class="bg-emerald-800 text-white">
                 <tr>
-                  <th scope="col" style="width: 25%;" class="p-2 py-4">Day</th>
+                  <th scope="col" style="width: 10%;" class="p-2 py-4">Day</th>
                   <th scope="col" class="p-2 py-4">Course</th>
-                  <th scope="col" class="p-2 py-4">Start Time</th>
-                  <th scope="col" class="p-2 py-4">End Time</th>
+                  <th scope="col" style="width: 10%;" class="p-2 py-4">Start Time</th>
+                  <th scope="col" style="width: 10%;" class="p-2 py-4">End Time</th>
                   <th scope="col" class="p-2 py-4">Lecturer</th>
+                  <th scope="col" class="p-2 py-4">Course Rep.</th>
                   <!-- <th scope="col" class="p-2 py-4">Departments</th> -->
                   <!-- <th scope="col" class="p-2 py-4">Holiday</th> -->
                   <th *ngIf="formData?.isEditable" scope="col" style="width: 5%;" class="p-2 py-4">Action</th>
@@ -113,44 +126,48 @@
         
               <tbody>
         
-                <tr *ngFor="let event of eventList; let i = index;" class="border-y border-gray-200 items-center">
+                <tr *ngFor="let activity of activityList; let i = index;" class="border-y border-gray-200 items-center">
         
                   <td class="p-2 py-4">
-                    <app-select-input [id]="event+'_day_'+i" [selectInputData]="{ items: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], placeholder: 'Select Option', disabled: !formData?.isEditable, defaultValue: event.date ?? null}" (selectionChanged)="onSelectionChanged2('day', $event)"></app-select-input>
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_day_'+i" [selectInputData]="{ items: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], placeholder: 'Select Option', disabled: !formData?.isEditable, autoClose: true, defaultValue: activity?.day ?? null }" (selectionChanged)="onSelectionChanged2('day', $event, activity)"></app-select-input>
                   </td>
         
                   <td class="p-2 py-4">
-                    <app-select-input [id]="event+'_course_'+i" [selectInputData]="{ items: initData?.courses, placeholder: 'Select Option',  disabled: !formData?.isEditable, defaultValue: event.course ?? null }" (selectionChanged)="onSelectionChanged2('course', $event)"></app-select-input>
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_course_'+i" [selectInputData]="{ items: initData?.courses, placeholder: 'Select Option', isSearchable: true,  disabled: !formData?.isEditable, autoClose: true, defaultValue: activity?.course ?? null }" (selectionChanged)="onSelectionChanged2('course', $event, activity)"></app-select-input>
                   </td>
         
                   <!-- <td class="p-2 py-4">
-                    <textarea rows="2" [disabled]="!formData?.isEditable" [name]="event+'_activity_'+i" type="text" class="w-full border rounded-md py-1 px-3" [(ngModel)]="event.activity"></textarea>
+                    <textarea rows="2" [disabled]="!formData?.isEditable" [name]="activity+'_day_'+i" type="text" class="w-full border rounded-md py-1 px-3" [(ngModel)]="event?.day"></textarea>
                   </td> -->
         
                   <td class="p-2 py-4">
-                    <input type="time" [disabled]="!formData?.isEditable" [name]="event+'_start_time_'+i" class="w-full border rounded-md p-1" [(ngModel)]="event.start_time" />
+                    <input type="time" [disabled]="!formData?.isEditable" [name]="activity+'_start_time_'+i" class="w-full border rounded-md p-1" [(ngModel)]="activity.start_time" />
                   </td>
         
                   <td class="p-2 py-4">
-                    <input type="time" [disabled]="!formData?.isEditable" [name]="event+'_end_time_'+i" class="w-full border rounded-md p-1" [(ngModel)]="event.end_time" />
+                    <input type="time" [disabled]="!formData?.isEditable" [name]="activity+'_end_time_'+i" class="w-full border rounded-md p-1" [(ngModel)]="activity.end_time" />
                   </td>
         
                   <td class="p-2 py-4">
-                    <app-select-input [id]="event+'_lecturer_'+i" [selectInputData]="{ items: initData?.lecturers, placeholder: 'Select Option',  disabled: !formData?.isEditable, defaultValue: event.lecturer ?? null }" (selectionChanged)="onSelectionChanged2('lecturer', $event)"></app-select-input>
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_lecturer_'+i" [selectInputData]="{ items: initData?.lecturers, placeholder: 'Select Option', displayProperty: 'full_name', searchProperty: 'full_name', isSearchable: true, autoClose: true,  disabled: !formData?.isEditable, defaultValue: activity?.lecturer ?? null }" (selectionChanged)="onSelectionChanged2('lecturer', $event, activity)"></app-select-input>
+                  </td>
+        
+                  <td class="p-2 py-4">
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_course_rep_'+i" [selectInputData]="{ items: initData?.course_reps, placeholder: 'Select Option', displayProperty: 'full_name', searchProperty: 'full_name', isSearchable: true,  autoClose: true, disabled: !formData?.isEditable, defaultValue: activity?.course_rep ?? null }" (selectionChanged)="onSelectionChanged2('course_rep', $event, activity)"></app-select-input>
                   </td>
         
                   <!-- <td class="p-2 py-4">
-                    <app-select-input [id]="event+'_member_groups_'+i" [selectInputData]="{ items: ['Persons & Person', 'Persons Only', 'Person Only'], placeholder: 'Select Option', multiple: true, disabled: !formData?.isEditable, defaultValue: event.member_groups ?? null }" (selectionChanged)="onSelectionChanged2('member_groups', $event)"></app-select-input>
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_member_groups_'+i" [selectInputData]="{ items: ['Persons & Person', 'Persons Only', 'Person Only'], placeholder: 'Select Option', multiple: true, disabled: !formData?.isEditable, defaultValue: event.member_groups ?? null }" (selectionChanged)="onSelectionChanged2('member_groups', $event)"></app-select-input>
                   </td> -->
         
                   <!-- <td class="py-4 text-center">
-                    <input type="checkbox" [disabled]="!formData?.isEditable" [name]="event+'is_holiday_'+i" [(ngModel)]="event.is_holiday" class="w-4 h-4 accent-emerald-700" />
+                    <input type="checkbox" [disabled]="!formData?.isEditable" [name]="activity+'is_holiday_'+i" [(ngModel)]="event.is_holiday" class="w-4 h-4 accent-emerald-700" />
                   </td> -->
         
                   <td class="p-2 py-4" *ngIf="formData?.isEditable">
                     <div class="p-2 flex flex-row items-center justify-between whitespace-nowrap space-x-3">
-                      <button type="button" class="bg-red-50 text-red-700 px-3 py-1.5 rounded-full" (click)="removeEvent(event)">✖</button>
-                      <button type="button" *ngIf="event === eventList[eventList?.length - 1] && event.activity" class="bg-emerald-50 text-emerald-700 px-3 py-1 text-xl rounded-full font-extrabold" (click)="addEvent()">+</button>
+                      <button type="button" class="bg-red-50 text-red-700 pl-1.5 pr-2.5 py-1.5 rounded-full" (click)="removeEvent(activity)">✖</button>
+                      <button type="button" *ngIf="activity === activityList[activityList?.length - 1] && activity?.day" class="bg-emerald-50 text-emerald-700 px-3 py-1 text-xl rounded-full font-extrabold" (click)="addEvent()">+</button>
                     </div>
                   </td>
         
@@ -162,7 +179,7 @@
         
             <!-- <div class="mt-8 flex justify-end gap-2">
               <button class="bg-red-50 text-red-700 hover:bg-red-100 px-4 py-2 rounded" (click)="clear()">Clear</button>
-              <button [disabled]="!eventList?.length && !eventList[eventList?.length - 1].activity" *ngIf="eventList?.length && eventList[eventList?.length - 1].activity" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded" (click)="saveEvents()">{{incomingSched.updating ? 'Update' : 'Save'}}</button>
+              <button [disabled]="!activityList?.length && !activityList[activityList?.length - 1].day" *ngIf="activityList?.length && activityList[activityList?.length - 1].day" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded" (click)="saveEvents()">{{incomingSched.updating ? 'Update' : 'Save'}}</button>
             </div> -->
         
           </div>
@@ -194,9 +211,9 @@
     </div>
 
     <div class="flex justify-end space-x-4 pt-4 px-3 border-emerald-100 border-t">
-      <button type="button" (click)="cancelModal()" [ngClass]="{'bg-emerald-600 text-white': !formData?.isEditable, 'bg-gray-300': formData?.isEditable}" class="px-4 py-2 rounded"> {{formData?.isEditable ? 'Cancel' : 'Close'}} </button>
-      <button *ngIf="formData?.isMultiPart" (click)="nextStep()" type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded"> {{firstPage ? 'Next' : 'Previous'}} </button>
-      <button *ngIf="formData?.isEditable && TableForm.valid" type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded"> Save </button>
+      <button type="button" (click)="cancelModal()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded"> {{formData?.isEditable ? 'Cancel' : 'Close'}} </button>
+      <button *ngIf="formData?.isMultiPart &&  formData?.isEditable" (click)="nextStep()" type="button" class="px-4 py-2 bg-yellow-50 text-yellow-600 rounded"> {{firstPage ? 'Next >>' : '<< Prev.'}} </button>
+      <button *ngIf="formData?.isMultiPart ? formData?.isEditable && TableForm.valid && activityList?.length > 0 : formData?.isEditable && TableForm.valid" type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded"> Save </button>
       <button type="button"  *ngIf="!formData?.isEditable" (click)="editForm()" [ngClass]="{'bg-yellow-500 text-white': !formData?.isEditable, 'bg-gray-300': formData?.isEditable}" class="px-4 py-2 bg-yellow-500 text-white rounded"> Edit </button>
     </div>
 

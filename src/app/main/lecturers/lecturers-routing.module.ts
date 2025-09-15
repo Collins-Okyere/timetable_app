@@ -3,8 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from '../shared/dashboard/dashboard.component';
 import { ProfileComponent } from '../shared/profile/profile.component';
 import { LecturersModule } from './lecturers.module';
-import { MyRecordsComponent } from './my-records/my-records.component';
-import { MyTimetableComponent } from './my-timetable/my-timetable.component';
+import { ReportsComponent } from '../shared/reports/reports.component';
+import { TimetableComponent } from '../shared/timetable/timetable.component';
 
 const routes: Routes = [
   {
@@ -16,12 +16,12 @@ const routes: Routes = [
         component: DashboardComponent
       },
       {
-        path: 'my_timetable',
-        component: MyTimetableComponent
+        path: 'timetables',
+        component: TimetableComponent
       },
       {
-        path: 'my_records',
-        component: MyRecordsComponent
+        path: 'reports',
+        component: ReportsComponent
       },
       {
         path: 'profile',

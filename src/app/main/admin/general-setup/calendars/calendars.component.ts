@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SmartTableComponent } from '../../../../../shared/reusable-components/smart-table/smart-table.component';
-import { ApiService } from '../../../../../shared/services/api.service';
+import { SmartTableComponent } from '../../../../shared/reusable-components/smart-table/smart-table.component';
+import { ApiService } from '../../../../shared/services/api.service';
 @Component({
   selector: 'app-calendars',
   standalone: true,
@@ -35,11 +35,7 @@ export class CalendarsComponent implements OnInit {
       tag: 'Calendar',
       description: 'List of Academic calendars',
       allowAdd: true,
-      allowFilters: false,
-      filters: {
-        neededData: [...this.neededData],
-        filterBy: []
-      },
+      neededData: this.neededData,
       sortBy: "start_date",
       allowStatCards: true,
       pageSize: 15,

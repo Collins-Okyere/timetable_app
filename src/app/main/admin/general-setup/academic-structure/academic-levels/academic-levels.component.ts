@@ -27,11 +27,7 @@ export class AcademicLevelsComponent implements OnInit {
         tag: 'Level',
         description: 'List of academic levels',
         allowAdd: true,
-        allowFilters: false,
-        filters: {
-          neededData: [...neededData],
-          filterBy: []
-        },
+        neededData: neededData,
         allowStatCards: true,
         pageSize: 15,
         stats: {

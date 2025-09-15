@@ -26,17 +26,14 @@ export class DepartmentsComponent implements OnInit {
         tag: 'Department',
         description: 'List of departments',
         allowAdd: true,
-        allowFilters: false,
-        filters: {
-          neededData: [...neededData],
-          filterBy: []
-        },
+        sortBy: 'name',
         allowStatCards: true,
         pageSize: 15,
         stats: {
           defaults: ['count', 'active', 'new'],
           special: []
         },
+        neededData: neededData,
         allowGlobalSearch: true,
         allowColumnSearch: true,
         allowDownload: true,

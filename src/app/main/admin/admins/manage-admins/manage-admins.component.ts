@@ -1,17 +1,18 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, HostListener } from '@angular/core';
 import { ApiService } from '../../../../shared/services/api.service';
+import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SelectInputComponent } from '../../../../shared/reusable-components/select-input/select-input.component';
 
 @Component({
-  selector: 'app-manage-users',
+  selector: 'app-manage-admins',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectInputComponent],
-  templateUrl: './manage-users.component.html',
-  styleUrl: './manage-users.component.css'
+  imports: [CommonModule, SelectInputComponent, FormsModule],
+  providers: [DatePipe],
+  templateUrl: './manage-admins.component.html',
+  styleUrl: './manage-admins.component.css'
 })
-export class ManageUsersComponent implements OnInit {
+export class ManageAdminsComponent {
   
   Math = Math
   users: any[] = [];

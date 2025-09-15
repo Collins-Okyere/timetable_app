@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SmartTableComponent } from '../../../../../shared/reusable-components/smart-table/smart-table.component';
-import { ApiService } from '../../../../../shared/services/api.service';
+import { SmartTableComponent } from '../../../../shared/reusable-components/smart-table/smart-table.component';
+import { ApiService } from '../../../../shared/services/api.service';
 @Component({
   selector: 'app-timetables',
   standalone: true,
@@ -22,9 +22,9 @@ export class TimetablesComponent implements OnInit {
   constructor(private api: ApiService){}
 
   async ngOnInit(){ 
-    this.neededData = ['timetables', 'courses', 'academic_levels', 'lecturers', 'departments', 'calendars'];
+    this.neededData = ['academic_timetables', 'courses', 'academic_levels', 'lecturers', 'departments', 'calendars', 'course_reps'];
     this.fetchedData = await this.api.fetchData(this.neededData);
-    this.timetables = this.fetchedData?.timetables
+    this.timetables = this.fetchedData?.academic_timetables
     this.setTable()   
   }
 
@@ -35,18 +35,14 @@ export class TimetablesComponent implements OnInit {
       tag: 'Timetable',
       description: 'List of Academic timetables',
       allowAdd: true,
-      allowFilters: false,
-      filters: {
-        neededData: [...this.neededData],
-        filterBy: []
-      },
-      sortBy: "start_date",
+      sortBy: "name",
       allowStatCards: true,
       pageSize: 15,
       stats: {
         defaults: ['count', 'active', 'new'],
         special: []
       },
+      neededData: this.neededData,
       allowGlobalSearch: true,
       allowColumnSearch: true,
       allowDownload: true,
@@ -57,19 +53,19 @@ export class TimetablesComponent implements OnInit {
       dataSet: this.timetables,
       isMultiPart: true,
       formFields: [
-        { field: "name", stretch: true, type: "input", required: true },
-        { field: "calendar", stretch: true, type: "select", list: this.fetchedData?.calendars, required: true },
+        // { field: "name", stretch: true, type: "input", required: true },
         { field: "department", stretch: true, type: "select", list: this.fetchedData?.departments, required: true },
+        { field: "calendar", stretch: true, type: "select", list: this.fetchedData?.calendars, required: true },
         { field: "academic_level", stretch: true, type: "select", list: this.fetchedData?.academic_levels, required: true },
-        { field: "day", type: "select", stretch: true, list: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], required: true, page2: true},
-        { field: "course", stretch: true, type: "select", list: this.fetchedData?.courses, required: true, page2: true },
-        { field: "start_time", type: "time", required: true, page2: true },
-        { field: "end_time", type: "time", required: true, page2: true },    
+        // { field: "event.day", type: "select", stretch: true, list: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], required: true, page2: true},
+        // { field: "event.course", stretch: true, type: "select", list: this.fetchedData?.courses, required: true, page2: true },
+        // { field: "event.start_time", type: "time", required: true, page2: true },
+        // { field: "event.end_time", type: "time", required: true, page2: true },    
 
       ],
-      tableFields: ["course", "academic_level", "day", "start_time", "end_time"],
-      path: 'timetables',
-      objs: 'timetables',
+      tableFields: ["department", "calendar", "academic_level"],
+      path: 'academic_timetables',
+      objs: 'academic_timetables',
       type: 'general',        
     }
   }

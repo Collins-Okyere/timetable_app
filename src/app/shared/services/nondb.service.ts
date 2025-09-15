@@ -18,20 +18,21 @@ export class NonDbService {
   }
 
   menu:any = [
+
     { page: 'dashboard', pageName: 'Dashboard', roles: ['super_admin', 'admin', 'lecturer', 'course_rep'] },
 
     { page: 'general_setup', pageName: 'General Setup', roles: ['super_admin', 'admin'],
       subPages: [
         { page: 'academic_structure', pageName: 'Academic Structure', roles: ['super_admin', 'admin'] },
-        { page: 'calendars_and_timetables', pageName: 'Calendars / Timetables', roles: ['super_admin', 'admin'] },
-        { page: 'scheduler', pageName: 'Scheduler', roles: ['super_admin', 'admin'] }
+        { page: 'calendars', pageName: 'Academic Calendars', roles: ['super_admin', 'admin'] },
+        { page: 'timetables', pageName: 'Academic Timetables', roles: ['super_admin', 'admin'] }
       ]
     },
 
-    { page: 'users', pageName: 'Users', roles: ['super_admin', 'admin'],
+    { page: 'admins', pageName: 'Admins', roles: ['super_admin', 'admin'],
       subPages: [
-        { page: 'add_user', pageName: 'Add User', roles: ['super_admin', 'admin'] },
-        { page: 'manage_users', pageName: 'Manage Users', roles: ['super_admin', 'admin'] }
+        { page: 'add_admin', pageName: 'Add Admin', roles: ['super_admin', 'admin'] },
+        { page: 'manage_admins', pageName: 'Manage Admins', roles: ['super_admin', 'admin'] }
       ]
     },
 
@@ -41,12 +42,17 @@ export class NonDbService {
         { page: 'manage_lecturers', pageName: 'Manage Lecturers', roles: ['super_admin', 'admin'] },
       ] 
     },
+
+    { page: 'course_reps', pageName: 'Course Reps.', roles: ['super_admin', 'admin'],
+      subPages: [
+        { page: 'add_course_rep', pageName: 'Add Course Rep.', roles: ['super_admin', 'admin'] },
+        { page: 'manage_course_reps', pageName: 'Manage Course Reps.', roles: ['super_admin', 'admin'] },
+      ] 
+    },
     
-    { page: 'my_timetable', pageName: 'My Timetable', roles: ['lecturer'] },
+    { page: 'timetables', pageName: 'My Timetable', roles: ['lecturer','course_rep'] },
 
-    { page: 'timetable', pageName: 'Timetable', roles: ['courseRep'] },
-
-    { page: 'my_records', pageName: 'My Records', roles: ['lecturer'] },
+    { page: 'reports', pageName: 'Reports', roles: ['super_admin', 'admin','lecturer', 'course_rep'] },
 
   ];
   

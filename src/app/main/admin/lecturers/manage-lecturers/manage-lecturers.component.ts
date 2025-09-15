@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../shared/services/api.service';
@@ -8,6 +8,7 @@ import { SelectInputComponent } from '../../../../shared/reusable-components/sel
   selector: 'app-manage-lecturers',
   standalone: true,
   imports: [CommonModule, FormsModule, SelectInputComponent],
+  providers: [DatePipe],
   templateUrl: './manage-lecturers.component.html',
   styleUrl: './manage-lecturers.component.css'
 })

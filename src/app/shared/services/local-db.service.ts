@@ -501,18 +501,6 @@ export class LocalDbService {
     },
   ]
 
-  timetables:any = [
-    {
-      id: 1,
-      couse: this.courses[0],
-      levels: this.academic_levels[0],
-      day: 'Monday',
-      start_time: '08:00',
-      end_time: '10:00',
-      is_active: true
-    }
-  ]
-
   calendars:any = [
     {
       id: 1,
@@ -552,7 +540,7 @@ export class LocalDbService {
       phone: '0243123456',
       gender: 'Male',
       is_active: false,
-      user_role: 'course_rep',
+      user_role: 'lecturer',
       photo: 'assets/user.png',
       email: 'prince@gmail.com',
       faculty: this.faculties[1],
@@ -639,7 +627,7 @@ export class LocalDbService {
       phone: '0243123456',
       gender: 'Male',
       is_active: true,
-      user_role: 'lecturer',
+      user_role: 'course_rep',
       status: 'Active',
       rating: 'Gold',
       photo: 'assets/user.png',
@@ -706,6 +694,27 @@ export class LocalDbService {
       courses: [this.courses[0]],
       is_deleted: false,
     },
+  ]
+
+  academic_timetables:any = [
+    {
+      id: 1,
+      // name: 'Academic timetable 1',
+      calendar: this.calendars[0],
+      department: this.departments[0],
+      academic_level: this.academic_levels[0],
+      activities:[
+        {
+          day: 'Monday',
+          course: this.courses[0],
+          lecturer: this.lecturers[0],
+          course_rep: this.course_reps[0],
+          start_time: '08:00',
+          end_time: '10:00',
+        }
+      ],
+      is_active: true
+    }
   ]
 
   reports: any[] = [

@@ -1,4 +1,4 @@
-<div class="mt-16 p-4 space-y-6 bg-gray-50 min-h-screen">
+<div class="mt-16 lg:p-16 p-4 space-y-6 bg-gray-50 min-h-screen">
 
   <!-- Page Title -->
   <div class="flex items-center justify-between">
@@ -85,14 +85,14 @@
             
             <td class="px-4 py-3 flex items-center space-x-2">
               <img [src]="lecturer.photo" alt="lecturer" class="w-8 h-8 rounded-full" />
-              <span>{{ lecturer.first_name }} {{ lecturer.last_name }}</span>
+              <span>{{ lecturer?.first_name }} {{ lecturer?.last_name }}</span>
             </td>
             
-            <td class="px-4 py-3">{{ lecturer.gender }}</td>
+            <td class="px-4 py-3">{{ lecturer?.gender }}</td>
 
-            <td class="px-4 py-3">{{ lecturer.phone}}</td>
+            <td class="px-4 py-3">{{ lecturer?.phone}}</td>
 
-            <td class="px-4 py-3">{{ lecturer.country.name }}</td>
+            <td class="px-4 py-3">{{ lecturer?.country?.name }}</td>
             
             <td class="px-4 py-3 text-right relative">
               <div class="inline-block text-left">
@@ -142,7 +142,7 @@
             
             <td class="px-4 py-3 flex items-center space-x-2">
               <img [src]="lecturer.photo" alt="lecturer" class="w-8 h-8 rounded-full" />
-              <span>{{ lecturer.first_name }} {{ lecturer.last_name }}</span>
+              <span>{{ lecturer?.first_name }} {{ lecturer?.last_name }}</span>
             </td>
             
             <td class="px-4 py-3 text-right relative">

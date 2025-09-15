@@ -1,20 +1,20 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService } from '../../../../shared/services/api.service';
 import { MediaUploadService } from '../../../../shared/reusable-components/media-upload/media-upload.service';
+import { ApiService } from '../../../../shared/services/api.service';
 import { SelectInputComponent } from '../../../../shared/reusable-components/select-input/select-input.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-add-user',
+  selector: 'app-add-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectInputComponent],
+  imports: [CommonModule, SelectInputComponent, FormsModule,],
   providers: [DatePipe],
-  templateUrl: './add-user.component.html',
-  styleUrl: './add-user.component.css'
+  templateUrl: './add-admin.component.html',
+  styleUrl: './add-admin.component.css'
 })
-export class AddUserComponent {
+export class AddAdminComponent {
 
   userDetails:any
   lastUserId: string = ''
@@ -121,5 +121,6 @@ export class AddUserComponent {
     this.displayImage = event.url
     this.user.photo = event.blob
   }
+
 
 }

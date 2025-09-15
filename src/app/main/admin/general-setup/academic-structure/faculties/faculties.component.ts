@@ -27,17 +27,13 @@ export class FacultiesComponent implements OnInit {
         tag: 'Faculty',
         description: 'List of faculties',
         allowAdd: true,
-        allowFilters: false,
-        filters: {
-          neededData: [...neededData],
-          filterBy: []
-        },
         allowStatCards: true,
         pageSize: 15,
         stats: {
           defaults: ['count', 'active', 'new'],
           special: []
         },
+        neededData: neededData,
         sortBy: 'name',
         allowGlobalSearch: true,
         allowColumnSearch: true,

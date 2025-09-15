@@ -1,23 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin.component';
-import { UsersComponent } from './users/users.component';
-import { AddUserComponent } from './users/add-user/add-user.component';
-import { ManageUsersComponent } from './users/manage-users/manage-users.component';
 import { GeneralSetupComponent } from './general-setup/general-setup.component';
 import { DashboardComponent } from '../shared/dashboard/dashboard.component';
 import { ProfileComponent } from '../shared/profile/profile.component';
 import { LecturersComponent } from '../lecturers/lecturers.component';
+import { AcademicStructureComponent } from './general-setup/academic-structure/academic-structure.component';
 import { AddLecturerComponent } from './lecturers/add-lecturer/add-lecturer.component';
 import { ManageLecturersComponent } from './lecturers/manage-lecturers/manage-lecturers.component';
-import { SchedulerComponent } from './general-setup/scheduler/scheduler.component';
-import { AcademicStructureComponent } from './general-setup/academic-structure/academic-structure.component';
-import { FacultiesComponent } from './general-setup/academic-structure/faculties/faculties.component';
-import { DepartmentsComponent } from './general-setup/academic-structure/departments/departments.component';
-import { CoursesComponent } from './general-setup/academic-structure/courses/courses.component';
-import { CalendarsComponent } from './general-setup/calendar-and-timetable/calendars/calendars.component';
-import { CalendarAndTimetableComponent } from './general-setup/calendar-and-timetable/calendar-and-timetable.component';
-import { TimetablesComponent } from './general-setup/calendar-and-timetable/timetables/timetables.component';
+import { CourseRepsComponent } from '../course-reps/course-reps.component';
+import { AddCourseRepComponent } from './course-reps/add-course-rep/add-course-rep.component';
+import { ManageCourseRepsComponent } from './course-reps/manage-course-reps/manage-course-reps.component';
+import { AdminsComponent } from './admins/admins.component';
+import { AddAdminComponent } from './admins/add-admin/add-admin.component';
+import { ManageAdminsComponent } from './admins/manage-admins/manage-admins.component';
+import { CalendarsComponent } from './general-setup/calendars/calendars.component';
+import { TimetablesComponent } from './general-setup/timetables/timetables.component';
+import { ReportsComponent } from '../shared/reports/reports.component';
 
 const routes: Routes = [
   {
@@ -48,20 +47,39 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'users',
-        component: UsersComponent,
+        path: 'course_reps',
+        component: CourseRepsComponent,
         children: [
           {
-            path: 'add_user',
-            component: AddUserComponent
+            path: 'add_course_rep',
+            component: AddCourseRepComponent
           },
           {
-            path: 'manage_users',
-            component: ManageUsersComponent
+            path: 'manage_course_reps',
+            component: ManageCourseRepsComponent
           },
           {
             path: '',
-            redirectTo: 'manage_users',
+            redirectTo: 'manage_course_reps',
+            pathMatch: 'full'
+          }
+        ]
+      },
+      {
+        path: 'admins',
+        component: AdminsComponent,
+        children: [
+          {
+            path: 'add_admin',
+            component: AddAdminComponent
+          },
+          {
+            path: 'manage_admins',
+            component: ManageAdminsComponent
+          },
+          {
+            path: '',
+            redirectTo: 'manage_admins',
             pathMatch: 'full'
           }
         ]
@@ -75,12 +93,12 @@ const routes: Routes = [
             component: AcademicStructureComponent
           },
           {
-            path: 'calendars_and_timetables',
-            component: CalendarAndTimetableComponent
+            path: 'calendars',
+            component: CalendarsComponent
           },
           {
-            path: 'scheduler',
-            component: SchedulerComponent
+            path: 'timetables',
+            component: TimetablesComponent
           },
           {
             path: '',
@@ -88,6 +106,10 @@ const routes: Routes = [
             pathMatch: 'full'
           }
         ]
+      },
+      {
+        path: 'reports',
+        component: ReportsComponent
       },
       {
         path: 'profile',
