@@ -41,7 +41,8 @@ export class SmartTableComponent implements OnInit {
         // allowGlobalSearch: true,
         // allowColumnSearch: true,
         // allowDownload: true,
-        // allowEdit: true,
+        // allowMenu: true,
+// allowEdit: true,
         // allowApprove: true,
         // allowDelete: true,
         // allowSorting: true,
@@ -93,19 +94,24 @@ export class SmartTableComponent implements OnInit {
   columnFilters: any = {};
   initFields:any[] = []
   showStats:any = true
-
+  
   constructor(private api: ApiService, private confirm: ConfirmModalService) {}
 
   async ngOnInit() {
     this.menuOpen = false
     this.user = await this.api.safeJSONParse('currUser');
     this.initData();
-    console.log(this.tableData?.dataSet)
   }
 
   async initData() {
     try {
       if(this.tableData !== null || this.tableData !== undefined) {
+        if(Object.keys(this.tableData?.dataSet[0]).includes('first_name')){
+          this.tableData.dataSet = this.tableData?.dataSet?.map((u:any) => {
+            u = {...u, user: {photo: u.photo, first_name: u.first_name, last_name: u.last_name, other_names: u.other_names, user_id: u.user_id }};
+            return u
+          });
+        }
         const neededData:any = this.tableData?.neededData ?? []
         this.fetchedData = await this.api.fetchData([...neededData]);
         this.refreshSelect = false         
@@ -138,63 +144,60 @@ export class SmartTableComponent implements OnInit {
     this.filter.end_date = new Date().toISOString().slice(0, 10);
   }
   
-  get filtered(): any[] {
+get filtered(): any[] {
+  if (!this.tableData?.dataSet) return [];
 
-    if (!this.tableData?.dataSet) {
-      return [];
-    }
+  let out = [...this.tableData?.dataSet];
 
-    let out = [...this.tableData?.dataSet];
-
-    // if (this.filter?.start_date) {
-    //   out = out.filter((d) => new Date(d?.start_date) >= new Date(this.filter?.start_date));
-    // }
-    // if (this.filter?.end_date) {
-    //   out = out.filter((d) => new Date(d?.end_date) <= new Date(this.filter?.end_date));
-    // }
-
-    
-    // search filter
-    if (this.filter?.search) {
-      const q = this.filter?.search.toLowerCase();
-      out = out.filter((d) =>
-        this.keys.some((key) =>
-          String(this.getFieldValue(d, key)).toLowerCase().includes(q)
-        )
-      );
-    }
-
-    // sorting
-    if (this.sortField) {
-      out.sort((a, b) => {
-        let valA = this.getFieldValue(a, this.sortField);
-        let valB = this.getFieldValue(b, this.sortField);
-
-        if (valA == null) return 1;
-        if (valB == null) return -1;
-
-        if (typeof valA === "string") {
-          return this.sortDirection === "asc"
-            ? valA.localeCompare(valB)
-            : valB.localeCompare(valA);
-        }
-        return this.sortDirection === "asc" ? valA - valB : valB - valA;
-      });
-    }
-
-    // column filters
-    Object.entries(this.columnFilters).forEach(([key, val]: any) => {
-      const filterVal = val.toLowerCase();
-      if (!filterVal) return;
-
-      out = out.filter((d: any) => {
-        const fieldValue = this.getFieldValue(d, key);
-        return fieldValue?.toString().toLowerCase().includes(filterVal);
-      });
-    });
-
-    return out;
+  // search filter
+  if (this.filter?.search) {
+    const q = this.filter?.search.toLowerCase();
+    out = out.filter((d) =>
+      this.keys.some((key) =>
+        String(this.getFieldValue(d, key)).toLowerCase().includes(q)
+      )
+    );
   }
+
+  // sorting
+  if (this.sortField) {
+    out.sort((a, b) => {
+      let valA = this.getFieldValue(a, this.sortField);
+      let valB = this.getFieldValue(b, this.sortField);
+
+      if (valA == null) return 1;
+      if (valB == null) return -1;
+
+      if (typeof valA === "string") {
+        return this.sortDirection === "asc"
+          ? valA.localeCompare(valB)
+          : valB.localeCompare(valA);
+      }
+      return this.sortDirection === "asc" ? valA - valB : valB - valA;
+    });
+  }
+
+  // column filters
+  Object.entries(this.columnFilters).forEach(([key, val]: any) => {
+    const filterVal = val?.toLowerCase();
+    if (!filterVal) return;
+    out = out.filter((d: any) =>
+      this.getFieldValue(d, key)?.toString().toLowerCase().includes(filterVal)
+    );
+  });
+
+  return out; // 🚨 do NOT slice here
+}
+
+get pageItems(): any[] {
+  const start = (this.page - 1) * this.tableData?.pageSize;
+  return this.filtered.slice(start, start + this.tableData?.pageSize);
+}
+
+get totalPages(): number {
+  return Math.max(1, Math.ceil(this.filtered.length / this.tableData?.pageSize));
+}
+
 
 
   reset(){
@@ -204,14 +207,14 @@ export class SmartTableComponent implements OnInit {
     }, 0)
   }
 
-  get pageItems(): any[] {
-    const start = (this.page - 1) * this.tableData?.pageSize;
-    return this.filtered?.slice(start, start + this.tableData?.pageSize);
-  }
+  // get pageItems(): any[] {
+  //   const start = (this.page - 1) * this.tableData?.pageSize;
+  //   return this.filtered?.slice(start, start + this.tableData?.pageSize);
+  // }
 
-  get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filtered?.length / this.tableData?.pageSize));
-  }
+  // get totalPages(): number {
+  //   return Math.max(1, Math.ceil(this.filtered?.length / this.tableData?.pageSize));
+  // }
 
   formatCurrency(val: number | undefined): string {
     if (!val) return '₵0.00';
@@ -340,7 +343,7 @@ export class SmartTableComponent implements OnInit {
     this.showAddModal = true;
   }
 
-  editItem(Item: any) {
+  editItem(Item: any, action?: string) {
     this.openAddModal(Item, true);
   }
 
@@ -349,25 +352,33 @@ export class SmartTableComponent implements OnInit {
   }
 
   saveItem(item:any, fnx?:string) {
+    const isAddTable:boolean = this.tableData?.tag === 'Lecturer' || this.tableData?.tag === 'Admin' || this.tableData?.tag === 'Course Rep'
+    isAddTable ? item = { ...item, user_role: this.tableData?.tag?.toLowerCase() } : item
     let action: string = ''
     const idx = this.tableData?.dataSet.findIndex((u: any) => u.id === item.id);
-      if (idx !== -1) {
-        action = 'updated'
-        if(!fnx){
-          this.tableData.dataSet[idx] = { ...item };
-        }else{
-          action = fnx
-          this.tableData.dataSet[idx] = { ...item, is_active: true, is_approved: true };
-        }
+    if (idx !== -1) {
+      action = 'updated'
+      if(!fnx){
+        this.tableData.dataSet[idx] = { ...item };
       }else{
-        action = 'saved'
-        if(!fnx){
-          this.tableData?.dataSet.push({ ...item, is_new: true});
-        }else{
-          this.tableData?.dataSet.push({ ...item, is_new: true, is_active: true });
-        }
+        action = fnx
+        this.tableData.dataSet[idx] = { ...item, is_active: true, is_approved: true };
       }
-      this.filtered
+    }else{
+      action = 'saved'
+      if(!fnx){
+        this.tableData?.dataSet.push({ ...item, is_new: true});
+      }else{
+        this.tableData?.dataSet.push({ ...item, is_new: true, is_active: true });
+      }
+    }
+    if(Object.keys(this.tableData?.dataSet[0]).includes('first_name')){
+      this.tableData.dataSet = this.tableData?.dataSet?.map((u:any) => {
+        u = {...u, user: {photo: u.photo, first_name: u.first_name, last_name: u.last_name, other_names: u.other_names, user_id: u.user_id }};
+        return u
+      });
+    }
+    this.filtered
     this.closeModal();
     this.api.toast.showToast(`${this.tableData?.tag ?? 'Item'} ${action} sucessfully!`, 'success');
   }
@@ -387,7 +398,7 @@ export class SmartTableComponent implements OnInit {
     
     message = { msg: "Are you sure?", status: "error", title: `Delete ${this.tableData?.tag ?? "Item"}` };
       if (this.tableData.tag) {
-        message.msg = `Are you sure you want to delete ${ item.name ? `\"${item.name}\"` : `this ${this.tableData.tag.toLowerCase() ?? "item" }?` }`;
+        message.msg = `Are you sure you want to delete ${ item.name ? `\"${item.name }\"` : `this ${this.tableData.tag.toLowerCase() ?? "item" }?` }`;
         if(this.tableData.type.includes("manage") || this.tableData.tag.toLowerCase() === "branch") message.msg += `<br>This will unassign this ${this.tableData.tag.toLowerCase() ?? "item" } from all members and staff.` 
       }
 
@@ -417,10 +428,11 @@ export class SmartTableComponent implements OnInit {
     const totalCash = this.filtered?.filter((d) => d?.donationType === 'Cash').reduce((sum, d) => sum + (d?.amount || 0), 0);
     const totalInKindCount = this.filtered?.filter((d) => d?.donationType === 'In-Kind').length;
     const totalPendingCount = this.filtered?.filter((d) => d?.status === 'Pending').length;
-    const totalRejectedCount = this.filtered?.filter((d) => d?.status === 'Rejected').length;
-    const totalApprovedCount = this.filtered?.filter((d) => d?.status === 'Approved').length;
-    const totalPaidCount = this.filtered?.filter((d) => d?.status === 'Approved').length;
-    return { totalCount, newCount, activeCount, maleCount, femaleCount, totalCash, totalInKindCount, totalPendingCount, totalRejectedCount, totalApprovedCount, totalPaidCount};
+    const totalMissedCount = this.filtered?.filter((d) => d?.status === 'Missed').length;
+    const totalSwappedCount = this.filtered?.filter((d) => d?.status === 'Swapped').length;
+    const totalCompletedCount = this.filtered?.filter((d) => d?.status === 'Completed').length;
+    const totalPaidCount = this.filtered?.filter((d) => d?.status === 'Completed').length;
+    return { totalCount, newCount, activeCount, maleCount, femaleCount, totalCash, totalInKindCount, totalPendingCount, totalMissedCount, totalCompletedCount, totalPaidCount, totalSwappedCount};
  }
 
   isImageUrl(url: string): boolean {

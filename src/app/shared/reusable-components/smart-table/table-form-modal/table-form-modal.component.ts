@@ -40,7 +40,7 @@ export class TableFormModalComponent implements OnInit {
   originalItem: any;
   currentTime: string = new Date().toTimeString().split(":").slice(0, 2).join(":");
   firstPage:boolean = true
-  initData:any
+  fetchedData:any
   refreshSelect:boolean = true
 
   constructor(
@@ -63,27 +63,11 @@ export class TableFormModalComponent implements OnInit {
           if ((this.formModel[key] === undefined || this.formModel[key] === null) && field.defaultValue !== undefined) {
             this.formModel[key] = field.defaultValue;
           }
-
           if(this.formModel.activities){
             this.activityList = this.formModel.activities;
             if(this.activityList.length === 0){
               this.activityList = [
-                {
-                  // activity: '',
-                  // start_date: new Date().toISOString().split('T')[0],
-                  // end_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-                  // groups: [],
-                  // departments: [],
-                  // is_holiday: false
-
-                  // day: '',
-                  // start_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5),
-                  // end_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5),
-                  // course: '',
-                  // lecturer: '',
-                  // course_rep: ''
-                  
-                }
+                {}
               ]
             }
           }
@@ -98,8 +82,7 @@ export class TableFormModalComponent implements OnInit {
   }
 
   async getData(){
-    // this.initData = await this.api.safeJSONParse('initData');
-    this.initData = await this.api.fetchData(this.formData.neededData);
+    this.fetchedData = await this.api.fetchData(this.formData.neededData);
   }
 
   get formKeys(): string[] {
@@ -107,13 +90,6 @@ export class TableFormModalComponent implements OnInit {
   }
 
   onSubmit() {
-    if(this.formModel.take_attendance ){
-      if (this.formModel.take_attendance === 'Yes') {
-        this.formModel.take_attendance = true;
-      } else if (this.formModel.take_attendance === 'No') {
-        this.formModel.take_attendance = false;
-      }
-    }
     let item:any = {...this.formModel,  }
     if(this.formModel.activities){
       item = {...this.formModel, activities: this.activityList}
@@ -140,20 +116,17 @@ export class TableFormModalComponent implements OnInit {
   }
 
   getDisplayValue(value: any, displayProp: string) {
-          if(!this.formData.isEditable){
-
-    if (!value) return '';
-    if (value.first_name || value.last_name || value.other_name) {
+    if(!this.formData.isEditable){
+      if (!value) return '';
+      if (value.first_name || value.last_name || value.other_name) {
         return [value.first_name, value.other_name, value.last_name].filter(Boolean).join(' ');
-     }
-    if (typeof value === 'object' && displayProp in value) {
-      return value[displayProp];
+      }
+      if (typeof value === 'object' && displayProp in value) {
+        return value[displayProp];
+      }
+      return typeof value === 'string' || typeof value === 'number' ? String(value) : '[Unknown]';
     }
-    return typeof value === 'string' || typeof value === 'number' ? String(value) : '[Unknown]';
   }
-    }
-
-
 
   onOutsideClick(event: MouseEvent) {
     if ((event.target as HTMLElement).classList.contains('bg-black')) {
@@ -167,16 +140,8 @@ export class TableFormModalComponent implements OnInit {
       this.formModel[fld.field] = event;
       this.refreshSelect = true
     })
-    // if(fld.field === 'take_attendance'){
-    //   if(event === 'Yes'){
-    //     this.formModel.take_attendance = true
-    //   }else{
-    //     this.formModel.take_attendance = false
-    //   }
-    // }
   }
   
-
   openUploadModal(field: string) {
     this.currField = field;
     this.mediaService.openModal({
@@ -192,9 +157,7 @@ export class TableFormModalComponent implements OnInit {
 
   nextStep() {
     this.firstPage = !this.firstPage;
-    // if(this.formModel.activities){
-      this.formModel = {...this.formModel, activities: this.activityList}
-    // }
+    this.formModel = {...this.formModel, activities: this.activityList ?? null}
   }
 
   get visibleFields(): any[] {
@@ -207,9 +170,9 @@ export class TableFormModalComponent implements OnInit {
   this.refreshSelect = false;
   setTimeout(() => {
     if (eventItem) {
-      eventItem[field] = value; // ✅ updates the actual row object
+      eventItem[field] = value;
     } else {
-      this.activityListItem[field] = value; // fallback if no event passed
+      this.activityListItem[field] = value;
     }
     this.refreshSelect = true;
   });
@@ -220,22 +183,7 @@ export class TableFormModalComponent implements OnInit {
     if (!Array.isArray(this.activityList)) {
       this.activityList = []
     }
-    this.activityList.push({
-      // activity: '',
-      // start_date: new Date().toISOString().split('T')[0],
-      // end_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-      // groups: [],
-      // departments: [],
-      // is_holiday: false
-
-      // day: '',
-      // course: '',
-      // start_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5),
-      // end_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5),
-      // lecturer: '',
-      // course_rep: ''
-      
-    });
+    this.activityList.push({});
   }
 
   removeEvent(event: any) {
@@ -248,27 +196,11 @@ export class TableFormModalComponent implements OnInit {
 
   resetEvents(){
     this.activityList = [
-      {
-        start_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5),
-        end_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5),
-        day: '',
-        course: null,
-        lecturer: null,
-        course_rep: null
-
-        // start_date: new Date().toISOString().split('T')[0],
-        // end_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
-      }
+      {}
     ]
   }
 
   saveEvents() {
-    // this.calendars.calendarList.push({...this.calendar});
-    // console.log(this.calendar)
-    // this.api.makeRequest('POST', 'calendars', this.calendar).then(async (res: any) => {
-    //   console.log(res)
-    // })
-    // this.resetEvents()
     this.formModel.activities = this.activityList.push({...this.activityListItem});
     // console.log(this.event)
     // this.api.makeRequest('POST', 'calendars', this.e).then(async (res: any) => {

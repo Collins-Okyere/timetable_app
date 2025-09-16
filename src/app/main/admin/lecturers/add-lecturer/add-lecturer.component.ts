@@ -22,18 +22,15 @@ export class AddLecturerComponent {
   lecturer: any = {
     photo: 'assets/user.png',
     gender: 'Male',
-    date_of_birth: new Date(),
-    onboarding_date: new Date(),
-    relations: [],
-    groups: []
+    faculties: [],
+    courses: [],
+    departments: []
   };
-  initData:any
+  fetchedData:any
   displayImage:any
   refreshSelect = true;
-  formSubmitted = false
-  neededData:any = ['countries','organisations','lecturer_groups']
-  branch:any
-  
+  formValid = false
+
   constructor(private datePipe: DatePipe, private readonly api: ApiService, private mediaService: MediaUploadService, private router: Router) {}
 
   async ngOnInit() {
@@ -41,10 +38,12 @@ export class AddLecturerComponent {
   }
   
   async setLecturer() {
-    const neededData:any = ['lecturer_groups']
+    const neededData:any = ['faculties','courses','lecturers','departments']
     this.refreshSelect = false
-    this.initData = await this.api.fetchData([...neededData])
+    this.fetchedData = await this.api.fetchData([...neededData])
     this.displayImage = 'assets/user.png';
+    this.lecturer.user_role = 'lecturer'
+    this.lecturer.user_id = 'lecturer'
     // await this.api.makeRequest('GET', 'add_lecturers/init', {}).then(async (data: any) => {
     //   if (data && data.newLecturerId) {
     //     this.lastLecturerId = data.lastLecturerId;
@@ -54,12 +53,10 @@ export class AddLecturerComponent {
     //   }
     // }).then(() => {
     //   this.lecturer.photo = 'assets/user.png';
-    setTimeout(() => {
-      this.lecturer.onboarding_date = this.datePipe.transform(this.lecturer.onboarding_date, 'yyyy-MM-dd');
-      this.lecturer.date_of_birth = this.datePipe.transform(this.lecturer.date_of_birth, 'yyyy-MM-dd');
-      this.refreshSelect = true
+      setTimeout(() => {
+        this.refreshSelect = true
 
-    })
+      })
     // });
   }
 
@@ -68,32 +65,34 @@ export class AddLecturerComponent {
   }
   
   async saveLecturer() {
-    if(this.lecturer.first_name && this.lecturer.last_name && this.lecturer.lecturer_id && this.lecturer.gender){
-      this.formSubmitted = true
-      const formData = new FormData();
-      const isBlob = this.lecturer.photo instanceof Blob;
-      if (!isBlob) {
-        const fallback = 'assets/user.png';
-        const photoUrl = this.lecturer.photo || fallback;
-        this.lecturer.photo = await this.api.getBlob(photoUrl);
-      }
-      formData.append('photo', this.lecturer.photo, 'lecturer-photo.jpg');
-      const lecturerPayload = { ...this.lecturer };
-      delete lecturerPayload.photo;
-      formData.append('lecturer', JSON.stringify(lecturerPayload));
-      const userRole:any = this.api.safeJSONParse('currUser').user_role;
-      this.api.makeRequest('POST', 'add_lecturers/create/', formData, true).then(async (data: any) => {
-        if (data.lecturer) {
-          this.api.addLocalStorage('tempData', data.lecturer);
-          this.router.navigate([`${userRole}/manage_add_lecturers`]);
-        }
-      }).catch((error: any) => {
-        this.api.toast.showToast('Please check all required fields.', 'error');
-      });
-    }else{
-      this.formSubmitted = true
-      this.api.toast.showToast('Please check all required fields.', 'error');
+    if(this.lecturer.first_name && this.lecturer.gender && this.lecturer.user_role && this.lecturer.faculties && this.lecturer.courses && this.lecturer.departments && this.lecturer.user_id){
+      this.formValid = true
     }
+    if(!this.formValid){
+      this.api.toast.showToast('Please check all required fields.', 'error');
+      return
+    }
+    const formData = new FormData();
+    const isBlob = this.lecturer.photo instanceof Blob;
+    if (!isBlob) {
+      const fallback = 'assets/user.png';
+      const photoUrl = this.lecturer.photo || fallback;
+      this.lecturer.photo = await this.api.getBlob(photoUrl);
+    }
+    formData.append('photo', this.lecturer.photo, 'lecturer-photo.jpg');
+    const lecturerPayload = { ...this.lecturer };
+    delete lecturerPayload.photo;
+    formData.append('lecturer', JSON.stringify(lecturerPayload));
+    const userRole:any = this.api.safeJSONParse('currUser').user_role;
+    // this.api.makeRequest('POST', 'add_lecturers/create/', formData, true).then(async (data: any) => {
+      // if (data.lecturer) {
+      //   this.api.addLocalStorage('tempData', data.lecturer);
+      //   this.router.navigate([`${userRole}/manage_lecturers`]);
+      // }
+    // }).catch((error: any) => {
+    //   this.api.toast.showToast('Please check all required fields.', 'error');
+    // });
+    this.reset()
   }
   
   reset() {
@@ -103,10 +102,9 @@ export class AddLecturerComponent {
       this.lecturer = {
         photo: 'assets/user.png',
         gender: 'Male',
-        relations: [],
-        groups: [],
-        date_of_birth: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
-        onboarding_date: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+        departments: [],
+        courses: [],
+        faculties: []
       };
       this.setLecturer();
       this.refreshSelect = true

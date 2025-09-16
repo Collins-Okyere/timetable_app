@@ -56,7 +56,7 @@
             <div *ngIf="tableData?.allowStatCards && showStats" class="mx-3 grid grid-cols-1 sm:grid-cols-3 lg:gap-4 gap-y-2 {{tableData?.allowFilters ? 'border-b lg:border-y border-gray-200 py-4 lg:py-8' : ''}}">
             
                 <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('count')" class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
-                    <div class="text-sm text-gray-700">Total {{tableData?.title ?? tableData?.tag ?? tableData?.subTitle}}</div>
+                    <div class="text-sm text-gray-700">Total {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
                     <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalCount }}</div>
                 </div>
             
@@ -71,32 +71,37 @@
                 </div>
             
                 <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('active')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
-                    <div class="text-sm text-gray-700">Active {{tableData?.title ?? tableData?.tag ?? tableData?.subTitle}}</div>
+                    <div class="text-sm text-gray-700">Active {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
                     <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.activeCount }}</div>
                 </div>
             
-                <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('approved')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
-                    <div class="text-sm text-gray-700">Approved {{tableData?.title ?? tableData?.tag ?? tableData?.subTitle}}</div>
-                    <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalApprovedCount }}</div>
+                <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('completed')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
+                    <div class="text-sm text-gray-700">Completed {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
+                    <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalCompletedCount }}</div>
+                </div>
+            
+                <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('missed')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
+                    <div class="text-sm text-gray-700">Missed {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
+                    <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalMissedCount }}</div>
+                </div>
+            
+                <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('swapped')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
+                    <div class="text-sm text-gray-700">Swapped {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
+                    <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalSwappedCount }}</div>
                 </div>
             
                 <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('pending')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
-                    <div class="text-sm text-gray-700">Pending {{tableData?.title ?? tableData?.tag ?? tableData?.subTitle}}</div>
+                    <div class="text-sm text-gray-700">Pending {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
                     <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalPendingCount }}</div>
                 </div>
             
-                <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('rejected')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
-                    <div class="text-sm text-gray-700">Rejected {{tableData?.title ?? tableData?.tag ?? tableData?.subTitle}}</div>
-                    <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalRejectedCount }}</div>
-                </div>
-            
                 <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('new')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
-                    <div class="text-sm text-gray-700">New {{tableData?.title ?? tableData?.tag ?? tableData?.subTitle}}</div>
+                    <div class="text-sm text-gray-700">New {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
                     <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.newCount }}</div>
                 </div>
             
                 <div *ngIf="tableData?.stats?.defaults?.length !== 0 && tableData?.stats?.defaults?.includes('paid')"  class="bg-white p-4 rounded-xl shadow flex flex-row justify-between items-center lg:block">
-                    <div class="text-sm text-gray-700">Paid {{tableData?.title ?? tableData?.tag ?? tableData?.subTitle}}</div>
+                    <div class="text-sm text-gray-700">Paid {{tableData?.tag ?? tableData?.title ?? tableData?.subTitle}}</div>
                     <div class="mt-2 font-semibold text-lg lg:text-2xl text-gray-800">{{ getStats.totalPaidCount }}</div>
                 </div>
 
@@ -192,16 +197,16 @@
                                     </div>
                                     <input *ngIf="tableData?.allowColumnSearch" [(ngModel)]="columnFilters[col]" [placeholder]="'Search ' + (col | capitalizeWords)" class="px-3 py-1 flex rounded focus:outline focus:outline-emerald-600 w-full" />
                                 </th>            
-                                <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-900">Actions</th>
+                                <th scope="col" *ngIf="tableData?.title !== 'Reports'" class="px-4 py-3 text-right text-xs font-medium text-gray-900">Actions</th>
                             </tr>
                         </thead>
 
                         <tbody *ngIf="tableData?.dataSet?.length > 0" class="divide-y divide-gray-100">
                             
-                            <tr *ngFor="let item of filtered; let i = index">
+                            <tr *ngFor="let item of pageItems; let i = index">
                             
                                 <td class="whitespace-nowrap p-3 font-bold text-sm text-gray-900">
-                                    {{ i+1 }}.
+                                    {{ (page - 1) * tableData?.pageSize + i + 1 }}.
                                 </td>
 
                                 <td *ngFor="let key of keys" class="whitespace-nowrap p-3 text-gray-900">
@@ -214,8 +219,10 @@
                                             </div>
                                         </div>
             
-                                        <div class="space-y-1" [ngClass]="{'text-gray-400': !item[key]?.name || !item[key], 'text-gray-900': item[key]?.name || item[key], 'hidden': isImageUrl(item[key]), 'bg-green-100 text-green-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === true, 'bg-red-100 text-red-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === false }">
-                                            <div class="font-medium whitespace-nowrap text-sm">{{ item[key]?.name ?? ( item[key]?.first_name ? item[key]?.first_name + ' ' + (item[key]?.other_names ? item[key]?.other_names + ' ' : '') + (item[key]?.last_name ?? '') : item[key] ) ?? '(Empty)' }}</div>
+                                        <div class="space-y-1" [ngClass]="{'text-gray-400': !item[key]?.name || !item[key], 'text-gray-900': item[key]?.name || item[key], 'hidden': isImageUrl(item[key]), 'bg-green-100 text-green-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === true, 'bg-red-100 text-red-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === false||  item[key] === 'Missed', 'bg-green-100 text-green-700': item[key] === 'super_admin' ||  item[key] === 'Completed', 'bg-blue-50 text-blue-700': item[key] === 'admin' || item[key] === 'Swapped', 'bg-gray-100 text-gray-700': item[key] === 'lecturer' || item[key] === 'course_rep', 'bg-yellow-50 text-yellow-700': item[key] === 'Pending', 'p-0.5 px-2 rounded-md': key === 'user_role' || key === 'status' }">
+                                            <div class="font-medium whitespace-nowrap text-sm"> 
+                                                {{item[key]?.name ?? ( item[key]?.first_name ? item[key]?.first_name + ' ' + (item[key]?.other_names ? item[key]?.other_names + ' ' : '') + (item[key]?.last_name ?? '') + (item[key]?.user_id ? ' (' + item[key]?.user_id + ')' : '') : item[key]  | capitalizeWords ) ?? '(Empty)' }}
+                                            </div>
                                             <div *ngIf="item[key]?.member_id || item[key]?.staff_id" class="text-gray-400">ID: <span class="text-gray-500">{{item[key]?.member_id ?? item[key]?.staff_id}}</span></div>
                                         </div>
 
@@ -231,7 +238,7 @@
 
                                 </td>
                                 
-                                <td *ngIf="tableData?.allowEdit || tableData?.allowDelete" class="whitespace-nowrap p-3 text-right text-xs font-medium space-x-2">
+                                <td *ngIf="tableData?.allowMenu" class="whitespace-nowrap p-3 text-right text-xs font-medium space-x-2">
                                     <div class="inline-block text-right">
                                         
                                         <button (focus)="item.showMenu = !item.showMenu" (blur)="item.showMenu = !item.showMenu" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
@@ -243,9 +250,10 @@
                                         <div *ngIf="item.showMenu" class="origin-top-right absolute right-28 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                                             <div class="py-1 text-sm text-gray-700">
                                                 <button (click)="viewItem(item);" class="block w-full text-left px-4 py-2 hover:bg-gray-100">View</button>
-                                                <button (click)="editItem(item);" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
-                                                <button *ngIf="tableData?.allowApprove && !item?.is_approved" (click)="saveItem(item, 'approved');" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Approve</button>
-                                                <button (click)="openConfirmModal(item)" class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Delete</button>
+                                                <button *ngIf="tableData?.allowEdit" (click)="editItem(item);" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
+                                                <button *ngIf="tableData?.allowApprove && !item?.is_approved" (click)="saveItem(item, 'completed');" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Approve</button>
+                                                <button *ngIf="tableData?.allowSwap && !item?.is_swapped" (click)="editItem(item, 'swapped');" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Swap</button>
+                                                <button *ngIf="tableData?.allowDelete" (click)="openConfirmModal(item)" class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Delete</button>
                                             </div>
                                         </div>
 

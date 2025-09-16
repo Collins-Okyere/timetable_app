@@ -1,17 +1,5 @@
 <div *ngIf="formData" class="z-50 fixed inset-0 flex items-center max-h-screen justify-center bg-black bg-opacity-50" (click)="formData.closeOnOutside && onOutsideClick($event)">
-  <form (ngSubmit)="onSubmit()" #TableForm="ngForm" class="animate-modal-in flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg w-full {{formData?.isMultiPart ? 'w-4/5 h-4/5' :formData?.formFields?.length <= 4 ? 'max-w-lg' : formData?.formFields?.length > 8 ? 'max-w-7xl' : 'max-w-3xl'}} min-h-[50vh] max-h-[95vh] overflow-y-auto" (click)="$event.stopPropagation()">
-
-
-
-<!-- <form
-  (click)="$event.stopPropagation()"
-  (ngSubmit)="onSubmit()"
-  #TableForm="ngForm"
-  [ngClass]="formData?.isMultiPart 
-                ? 'w-full max-w-6xl h-[90vh]' 
-                : 'w-full max-w-lg'"
-  class="bg-white p-6 rounded-2xl shadow-xl overflow-y-auto transition-all duration-300"
-> -->
+  <form (ngSubmit)="onSubmit()" #TableForm="ngForm" class="animate-modal-in flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg w-full {{formData?.isMultiPart && !firstPage ? 'w-4/5 h-4/5' : formData?.formFields?.length <= 4 ? 'max-w-lg' : formData?.formFields?.length > 8 ? 'max-w-7xl' : 'max-w-3xl'}} min-h-[50vh] max-h-[95vh] overflow-y-auto" (click)="$event.stopPropagation()">
 
     <div class="h-full px-3">
 
@@ -21,25 +9,6 @@
 
       <div class="py-6 px-3 {{formData?.formFields?.length > 8 ? '' : 'pb-12'}} space-y-4 h-full border-emerald-100 border-t">
 
-        <!-- If multiple pages -->
-        <!-- <div *ngIf="formData?.isMultiPart && !firstPage" (click)="nextStep()" class="flex text-emerald-700 hover:underline justify-start text-xs">
-          
-          <div class="cursor-pointer  bg-gray-100 rounded-2xl px-3 py-1 w-1/8 inline-flex justify-between items-center space-x-4">
-            
-            <svg *ngIf="!firstPage" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-
-            <span>{{firstPage ? 'Next' : 'Previous'}}</span>
-            
-            <svg *ngIf="firstPage" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-
-          </div>
-
-        </div> -->
-        
         <div class="{{firstPage && formData?.tag === 'Timetable' ? 'grid' : !firstPage && formData?.tag === 'Timetable' ? 'hidden' : 'grid'}} {{formData?.formFields?.length > 8 ? 'lg:gap-y-2 lg:gap-x-4 gap-4' : 'pb-4 gap-4'}}" [ngClass]="{ 'grid-cols-1': formData?.formFields?.length <= 4, 'grid-cols-1 lg:grid-cols-2': formData?.formFields?.length > 4 }">
           <div *ngFor="let fld of visibleFields" class="mb-3 col-span-1" [ngClass]="{ 'lg:col-span-2': fld.stretch, 'lg:col-span-1': !fld.stretch }">
 
@@ -85,12 +54,12 @@
             <ng-container *ngIf="!formData?.isEditable">
               <div *ngIf="!Array.isArray(formModel[fld.field])" class="py-2 block w-full text-sm text-gray-800">
                 <img *ngIf="formModel[fld.field]?.image || formModel[fld.field]?.photo || formModel[fld.field]?.flag" [src]="formModel[fld.field]?.image || formModel[fld.field]?.photo || formModel[fld.field]?.flag" class="w-6 h-6 inline-block rounded-full mr-2" />
-                {{ getDisplayValue(formModel[fld.field], fld.displayProperty || 'name' || 'full_name') }}
+                {{ getDisplayValue(formModel[fld.field], fld.displayProperty || 'name' || 'full_name')  | capitalizeWords}}
               </div>
               <div *ngIf="Array.isArray(formModel[fld.field])" class="text-sm space-y-1">
                 <ul class="text-sm space-y-1">
                   <li *ngFor="let subItem of formModel[fld.field]" class="flex flex-wrap items-center space-x-1">
-                    <span [ngClass]="{'text-gray-400': !subItem?.name || !subItem}"> {{ subItem?.name ? '• ' + subItem.name : subItem && !subItem.name ? '• ' + subItem : '(Empty)' }} </span>
+                    <span [ngClass]="{'text-gray-400': !subItem?.name || !subItem}"> {{ subItem?.name ? '• ' + subItem.name : subItem && !subItem.name ? '• ' + subItem : '(Empty)'  | capitalizeWords}} </span>
                   </li>
               </ul>
             </div> 
@@ -101,7 +70,7 @@
 
 
         <!-- Timetable Only -->
-        <div *ngIf="!firstPage && formData?.tag === 'Timetable' && formData?.isEditable || formData?.tag === 'Timetable' && !formData?.isEditable">
+        <div *ngIf="!firstPage && formData?.tag === 'Timetable' && formData?.isEditable || formData?.tag === 'Timetable' && !formData?.isEditable && !firstPage">
           <div class="shadow pb-8 p-4 rounded-sm">
         
             <div class="flex justify-between pb-4">
@@ -118,8 +87,6 @@
                   <th scope="col" style="width: 10%;" class="p-2 py-4">End Time</th>
                   <th scope="col" class="p-2 py-4">Lecturer</th>
                   <th scope="col" class="p-2 py-4">Course Rep.</th>
-                  <!-- <th scope="col" class="p-2 py-4">Departments</th> -->
-                  <!-- <th scope="col" class="p-2 py-4">Holiday</th> -->
                   <th *ngIf="formData?.isEditable" scope="col" style="width: 5%;" class="p-2 py-4">Action</th>
                 </tr>
               </thead>
@@ -133,12 +100,8 @@
                   </td>
         
                   <td class="p-2 py-4">
-                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_course_'+i" [selectInputData]="{ items: initData?.courses, placeholder: 'Select Option', isSearchable: true,  disabled: !formData?.isEditable, autoClose: true, defaultValue: activity?.course ?? null }" (selectionChanged)="onSelectionChanged2('course', $event, activity)"></app-select-input>
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_course_'+i" [selectInputData]="{ items: fetchedData?.courses, placeholder: 'Select Option', isSearchable: true,  disabled: !formData?.isEditable, autoClose: true, defaultValue: activity?.course ?? null }" (selectionChanged)="onSelectionChanged2('course', $event, activity)"></app-select-input>
                   </td>
-        
-                  <!-- <td class="p-2 py-4">
-                    <textarea rows="2" [disabled]="!formData?.isEditable" [name]="activity+'_day_'+i" type="text" class="w-full border rounded-md py-1 px-3" [(ngModel)]="event?.day"></textarea>
-                  </td> -->
         
                   <td class="p-2 py-4">
                     <input type="time" [disabled]="!formData?.isEditable" [name]="activity+'_start_time_'+i" class="w-full border rounded-md p-1" [(ngModel)]="activity.start_time" />
@@ -149,20 +112,12 @@
                   </td>
         
                   <td class="p-2 py-4">
-                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_lecturer_'+i" [selectInputData]="{ items: initData?.lecturers, placeholder: 'Select Option', displayProperty: 'full_name', searchProperty: 'full_name', isSearchable: true, autoClose: true,  disabled: !formData?.isEditable, defaultValue: activity?.lecturer ?? null }" (selectionChanged)="onSelectionChanged2('lecturer', $event, activity)"></app-select-input>
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_lecturer_'+i" [selectInputData]="{ items: fetchedData?.lecturers, placeholder: 'Select Option', displayProperty: 'full_name', searchProperty: 'full_name', isSearchable: true, autoClose: true,  disabled: !formData?.isEditable, defaultValue: activity?.lecturer ?? null }" (selectionChanged)="onSelectionChanged2('lecturer', $event, activity)"></app-select-input>
                   </td>
         
                   <td class="p-2 py-4">
-                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_course_rep_'+i" [selectInputData]="{ items: initData?.course_reps, placeholder: 'Select Option', displayProperty: 'full_name', searchProperty: 'full_name', isSearchable: true,  autoClose: true, disabled: !formData?.isEditable, defaultValue: activity?.course_rep ?? null }" (selectionChanged)="onSelectionChanged2('course_rep', $event, activity)"></app-select-input>
+                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_course_rep_'+i" [selectInputData]="{ items: fetchedData?.course_reps, placeholder: 'Select Option', displayProperty: 'full_name', searchProperty: 'full_name', isSearchable: true,  autoClose: true, disabled: !formData?.isEditable, defaultValue: activity?.course_rep ?? null }" (selectionChanged)="onSelectionChanged2('course_rep', $event, activity)"></app-select-input>
                   </td>
-        
-                  <!-- <td class="p-2 py-4">
-                    <app-select-input *ngIf="refreshSelect" [id]="activity+'_member_groups_'+i" [selectInputData]="{ items: ['Persons & Person', 'Persons Only', 'Person Only'], placeholder: 'Select Option', multiple: true, disabled: !formData?.isEditable, defaultValue: event.member_groups ?? null }" (selectionChanged)="onSelectionChanged2('member_groups', $event)"></app-select-input>
-                  </td> -->
-        
-                  <!-- <td class="py-4 text-center">
-                    <input type="checkbox" [disabled]="!formData?.isEditable" [name]="activity+'is_holiday_'+i" [(ngModel)]="event.is_holiday" class="w-4 h-4 accent-emerald-700" />
-                  </td> -->
         
                   <td class="p-2 py-4" *ngIf="formData?.isEditable">
                     <div class="p-2 flex flex-row items-center justify-between whitespace-nowrap space-x-3">
@@ -177,34 +132,8 @@
         
             </table>
         
-            <!-- <div class="mt-8 flex justify-end gap-2">
-              <button class="bg-red-50 text-red-700 hover:bg-red-100 px-4 py-2 rounded" (click)="clear()">Clear</button>
-              <button [disabled]="!activityList?.length && !activityList[activityList?.length - 1].day" *ngIf="activityList?.length && activityList[activityList?.length - 1].day" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded" (click)="saveEvents()">{{incomingSched.updating ? 'Update' : 'Save'}}</button>
-            </div> -->
-        
           </div>
         </div>
-
-
-        <!-- If multiple pages -->
-        <!-- <div *ngIf="formData?.isMultiPart"  (click)="nextStep()" class="flex text-emerald-700 hover:underline justify-end text-xs">
-          
-          <div class="cursor-pointer  bg-gray-100 rounded-2xl px-3 py-1 w-1/8 inline-flex justify-between items-center space-x-4">
-            
-            <svg *ngIf="!firstPage" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-
-            <span>{{firstPage ? 'Next' : 'Previous'}}</span>
-            
-            <svg *ngIf="firstPage" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-
-          </div>
-
-        </div> -->
-
 
       </div>
 
@@ -212,8 +141,8 @@
 
     <div class="flex justify-end space-x-4 pt-4 px-3 border-emerald-100 border-t">
       <button type="button" (click)="cancelModal()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded"> {{formData?.isEditable ? 'Cancel' : 'Close'}} </button>
-      <button *ngIf="formData?.isMultiPart &&  formData?.isEditable" (click)="nextStep()" type="button" class="px-4 py-2 bg-yellow-50 text-yellow-600 rounded"> {{firstPage ? 'Next >>' : '<< Prev.'}} </button>
-      <button *ngIf="formData?.isMultiPart ? formData?.isEditable && TableForm.valid && activityList?.length > 0 : formData?.isEditable && TableForm.valid" type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded"> Save </button>
+      <button *ngIf="formData?.isMultiPart" (click)="nextStep()" type="button" class="px-4 py-2 bg-yellow-50 text-yellow-600 rounded"> {{firstPage ? 'Next >>' : '<< Prev.'}} </button>
+      <button *ngIf="formData?.isEditable && TableForm.valid" type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded"> Save </button>
       <button type="button"  *ngIf="!formData?.isEditable" (click)="editForm()" [ngClass]="{'bg-yellow-500 text-white': !formData?.isEditable, 'bg-gray-300': formData?.isEditable}" class="px-4 py-2 bg-yellow-500 text-white rounded"> Edit </button>
     </div>
 

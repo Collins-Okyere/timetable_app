@@ -9,101 +9,96 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-add-admin',
   standalone: true,
-  imports: [CommonModule, SelectInputComponent, FormsModule,],
+  imports: [CommonModule, FormsModule, SelectInputComponent],
   providers: [DatePipe],
   templateUrl: './add-admin.component.html',
   styleUrl: './add-admin.component.css'
 })
 export class AddAdminComponent {
 
-  userDetails:any
-  lastUserId: string = ''
-  user: any = {
+  lastAdminId: string = ''
+  admin: any = {
     photo: 'assets/user.png',
     gender: 'Male'
   };
-  initData:any
+  fetchedData:any
   displayImage:any
   refreshSelect = true;
-  formSubmitted = false
-  neededData:any = []
-  branch:any
+  formValid = false
   
   constructor(private datePipe: DatePipe, private readonly api: ApiService, private mediaService: MediaUploadService, private router: Router) {}
 
   async ngOnInit() {
-    this.setUser();
+    this.setAdmin();
   }
   
-  async setUser() {
-    const neededData:any = ['organisations']
+  async setAdmin() {
+    // const neededData:any = ['']
     this.refreshSelect = false
-    this.initData = await this.api.fetchData([...neededData])
     this.displayImage = 'assets/user.png';
-    // await this.api.makeRequest('GET', 'users/init', {}).then(async (data: any) => {
-    //   if (data && data.newUserId) {
-    //     this.lastUserId = data.lastUserId;
-    //     this.user.user_id = data.newUserId;
+    // await this.api.makeRequest('GET', 'admins/init', {}).then(async (data: any) => {
+    //   if (data && data.newadminId) {
+    //     this.lastAdminId = data.lastAdminId;
+    //     this.admin.admin_id = data.newadminId;
     //   } else {
-    //     this.user.user_id = ''; 
+    //     this.admin.admin_id = ''; 
     //   }
     // }).then(() => {
-    //   this.user.photo = 'assets/user.png';
-    setTimeout(() => {
-      this.user.onboarding_date = this.datePipe.transform(this.user.onboarding_date, 'yyyy-MM-dd');
-      this.user.date_of_birth = this.datePipe.transform(this.user.date_of_birth, 'yyyy-MM-dd');
-      this.refreshSelect = true
-
-    })
+      this.admin.photo = 'assets/user.png';
+      this.admin.user_role = 'admin';
+      this.admin.gender = 'Male';
+      setTimeout(() => {
+        // this.admin.onboarding_date = this.datePipe.transform(this.admin.onboarding_date, 'yyyy-MM-dd');
+        // this.admin.date_of_birth = this.datePipe.transform(this.admin.date_of_birth, 'yyyy-MM-dd');
+        this.refreshSelect = true
+      })
     // });
   }
 
   onSelectionChanged(field: string, value: any) {
-    this.user[field] = value.id ?? value;
+    this.admin[field] = value.id ?? value;
   }
   
-  async saveUser() {
-    if(this.user.first_name && this.user.last_name && this.user.user_id && this.user.gender){
-      this.formSubmitted = true
-      const formData = new FormData();
-      const isBlob = this.user.photo instanceof Blob;
-      if (!isBlob) {
-        const fallback = 'assets/user.png';
-        const photoUrl = this.user.photo || fallback;
-        this.user.photo = await this.api.getBlob(photoUrl);
-      }
-      formData.append('photo', this.user.photo, 'user-photo.jpg');
-      const userPayload = { ...this.user };
-      delete userPayload.photo;
-      formData.append('user', JSON.stringify(userPayload));
-      const userRole:any = this.api.safeJSONParse('currUser').user_role;
-      this.api.makeRequest('POST', 'users/create/', formData, true).then(async (data: any) => {
-        if (data.user) {
-          this.api.addLocalStorage('tempData', data.user);
-          this.router.navigate([`${userRole}/manage_users`]);
-        }
-      }).catch((error: any) => {
-        this.api.toast.showToast('Please check all required fields.', 'error');
-      });
-    }else{
-      this.formSubmitted = true
-      this.api.toast.showToast('Please check all required fields.', 'error');
+  async saveAdmin() {
+    if(this.admin.first_name && this.admin.gender && this.admin.user_role && this.admin.user_id){
+      this.formValid = true
     }
+    if(!this.formValid){
+      this.api.toast.showToast('Please check all required fields.', 'error');
+      return
+    }
+    const formData = new FormData();
+    const isBlob = this.admin.photo instanceof Blob;
+    if (!isBlob) {
+      const fallback = 'assets/user.png';
+      const photoUrl = this.admin.photo || fallback;
+      this.admin.photo = await this.api.getBlob(photoUrl);
+    }
+    formData.append('photo', this.admin.photo, 'admin-photo.jpg');
+    const adminPayload = { ...this.admin };
+    delete adminPayload.photo;
+    formData.append('admin', JSON.stringify(adminPayload));
+    const userRole:any = this.api.safeJSONParse('currUser').user_role;
+    // this.api.makeRequest('POST', 'admins/create/', formData, true).then(async (data: any) => {
+    //   if (data.admin) {
+    //     this.api.addLocalStorage('tempData', data.admin);
+    //     this.router.navigate([`${userRole}/manage_admins`]);
+    //   }
+    // }).catch((error: any) => {
+    //   this.api.toast.showToast('Please check all required fields.', 'error');
+    // });
+    this.reset()
   }
   
   reset() {
     this.refreshSelect = false;
-    setTimeout(() => 
-      {
-      this.user = {
+    setTimeout(() =>  {
+      this.admin = {
         photo: 'assets/user.png',
         gender: 'Male',
-        relations: [],
-        groups: [],
-        date_of_birth: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
-        onboarding_date: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+        user_role: 'admin'
       };
-      this.setUser();
+      this.setAdmin();
       this.refreshSelect = true
     }, 0);
   }
@@ -112,14 +107,14 @@ export class AddAdminComponent {
   openUploadModal() {
     this.mediaService.openModal({
       title: 'Upload Avatar',
-      image: this.user.photo,
+      image: this.admin.photo,
       okAction: (croppedImage: any) => this.saveImage(croppedImage)
     });
   }  
   
   saveImage(event: any) {
     this.displayImage = event.url
-    this.user.photo = event.blob
+    this.admin.photo = event.blob
   }
 
 
