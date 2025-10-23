@@ -39,16 +39,16 @@ export class AddAdminComponent {
     // await this.api.makeRequest('GET', 'admins/init', {}).then(async (data: any) => {
     //   if (data && data.newadminId) {
     //     this.lastAdminId = data.lastAdminId;
-    //     this.admin.admin_id = data.newadminId;
+    //     this.admin.adminId = data.newadminId;
     //   } else {
-    //     this.admin.admin_id = ''; 
+    //     this.admin.adminId = ''; 
     //   }
     // }).then(() => {
       this.admin.photo = 'assets/user.png';
-      this.admin.user_role = 'admin';
+      this.admin.userRole = 'admin';
       this.admin.gender = 'Male';
       setTimeout(() => {
-        // this.admin.onboarding_date = this.datePipe.transform(this.admin.onboarding_date, 'yyyy-MM-dd');
+        // this.admin.onboardingDate = this.datePipe.transform(this.admin.onboardingDate, 'yyyy-MM-dd');
         // this.admin.date_of_birth = this.datePipe.transform(this.admin.date_of_birth, 'yyyy-MM-dd');
         this.refreshSelect = true
       })
@@ -60,7 +60,7 @@ export class AddAdminComponent {
   }
   
   async saveAdmin() {
-    if(this.admin.first_name && this.admin.gender && this.admin.user_role && this.admin.user_id){
+    if(this.admin.firstName && this.admin.gender && this.admin.userRole && this.admin.userId){
       this.formValid = true
     }
     if(!this.formValid){
@@ -78,11 +78,11 @@ export class AddAdminComponent {
     const adminPayload = { ...this.admin };
     delete adminPayload.photo;
     formData.append('admin', JSON.stringify(adminPayload));
-    const userRole:any = this.api.safeJSONParse('currUser').user_role;
+    const userRole:any = this.api.safeJSONParse('currUser').userRole;
     // this.api.makeRequest('POST', 'admins/create/', formData, true).then(async (data: any) => {
     //   if (data.admin) {
     //     this.api.addLocalStorage('tempData', data.admin);
-    //     this.router.navigate([`${userRole}/manage_admins`]);
+    //     this.router.navigate([`${userRole}/manageAdmins`]);
     //   }
     // }).catch((error: any) => {
     //   this.api.toast.showToast('Please check all required fields.', 'error');
@@ -96,7 +96,7 @@ export class AddAdminComponent {
       this.admin = {
         photo: 'assets/user.png',
         gender: 'Male',
-        user_role: 'admin'
+        userRole: 'admin'
       };
       this.setAdmin();
       this.refreshSelect = true

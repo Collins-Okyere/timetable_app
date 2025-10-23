@@ -27,9 +27,9 @@
             <div class="collapse-title {{activeIndex === 9 ? 'text-white' : 'text-emerald-100'}}">
                 <div class="flex justify-start space-x-2 items-center">
                     <div class="w-6 rounded-full">
-                        <img alt="image" [src]="currUser.photo" />
+                        <img alt="image" [src]="currUser?.photo_url" />
                     </div>
-                    <span>{{currUser.first_name + ' ' + currUser.last_name}}</span>
+                    <span>{{ currUser?.full_name ?? currUser?.firstName + ' ' + currUser?.lastName}}</span>
                 </div>
             </div>
             <div class="collapse-content text-sm px-4">
@@ -69,7 +69,7 @@
                     
                     <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                         <div class="w-10 rounded-full">
-                            <img alt="userImg" [src]="currUser.photo" />
+                            <img alt="userImg" [src]="currUser?.photo_url" />
                         </div>
                     </div>
 

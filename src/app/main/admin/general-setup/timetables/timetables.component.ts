@@ -22,9 +22,9 @@ export class TimetablesComponent implements OnInit {
   constructor(private api: ApiService){}
 
   async ngOnInit(){ 
-    this.neededData = ['academic_timetables', 'courses', 'academic_levels', 'lecturers', 'departments', 'calendars', 'course_reps'];
+    this.neededData = ['academicTimetables', 'courses', 'academicLevels', 'lecturers', 'departments', 'calendars', 'courseReps'];
     this.fetchedData = await this.api.fetchData(this.neededData);
-    this.timetables = this.fetchedData?.academic_timetables
+    this.timetables = this.fetchedData?.academicTimetables
     this.setTable()   
   }
 
@@ -47,8 +47,8 @@ export class TimetablesComponent implements OnInit {
       allowColumnSearch: true,
       allowDownload: true,
       allowMenu: true,
-allowEdit: true,
-      allowApprove: true,
+      allowEdit: true,
+      allowApproval: true,
       allowDelete: true,
       allowSorting: true,
       dataSet: this.timetables,
@@ -57,16 +57,16 @@ allowEdit: true,
         // { field: "name", stretch: true, type: "input", required: true },
         { field: "department", stretch: true, type: "select", list: this.fetchedData?.departments, required: true },
         { field: "calendar", stretch: true, type: "select", list: this.fetchedData?.calendars, required: true },
-        { field: "academic_level", stretch: true, type: "select", list: this.fetchedData?.academic_levels, required: true },
+        { field: "academicLevel", stretch: true, type: "select", list: this.fetchedData?.academicLevels, required: true },
         // { field: "event.day", type: "select", stretch: true, list: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], required: true, page2: true},
         // { field: "event.course", stretch: true, type: "select", list: this.fetchedData?.courses, required: true, page2: true },
-        // { field: "event.start_time", type: "time", required: true, page2: true },
-        // { field: "event.end_time", type: "time", required: true, page2: true },    
+        // { field: "event.startTime", type: "time", required: true, page2: true },
+        // { field: "event.endTime", type: "time", required: true, page2: true },    
 
       ],
-      tableFields: ["department", "calendar", "academic_level"],
-      path: 'academic_timetables',
-      objs: 'academic_timetables',
+      tableFields: ["department", "calendar", "academicLevel"],
+      path: 'academicTimetables',
+      objs: 'academicTimetables',
       type: 'general',        
     }
   }

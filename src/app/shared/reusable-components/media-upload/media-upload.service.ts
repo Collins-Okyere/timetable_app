@@ -10,7 +10,7 @@ export class MediaUploadService {
   modalState$ = this.modalState.asObservable();
 
   openModal(config: any) {
-    this.modalState.next({ isOpen: true, croppedBlob: undefined, ...config });
+    this.modalState.next({ isOpen: true, croppedBlob: undefined, ...config, width: 'lg' });
   }
 
   closeModal() {

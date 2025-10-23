@@ -19,65 +19,15 @@ import { ConfirmModalService } from '../modals/confirm-modal/confirm-modal.servi
 })
 export class SmartTableComponent implements OnInit {
   
-  // @Input() tableData:any = {
-  //       title: 'Departments',
-        // subTitle: 'Departments',
-        // tag: 'Department',
-        // description: 'List of departments',
-        // allowAdd: true,
-        // allowFilters: true,
-        // filters: {
-        //   neededData: ['organisations', 'beneficiaries', 'projects'],
-        //   filterBy: ['date','organisation','project','donationType']
-        // },
-        // sortBy: 'date',
-        // allowStatCards: true,
-        // pageSize: 15,
-        // stats: {
-          // defaults: ['count','gender', 'active', 'new', 'approved', 'pending', 'paid', 'rejected', 'pending', 'totalCash', 'totalInKind'],
-          // defaults: ['count', 'active', 'new'],
-          // special: []
-        // },
-        // allowGlobalSearch: true,
-        // allowColumnSearch: true,
-        // allowDownload: true,
-        // allowMenu: true,
-// allowEdit: true,
-        // allowApprove: true,
-        // allowDelete: true,
-        // allowSorting: true,
-        // dataSet: this.fetchedData?.departments,
-        // formFields: [
-        //   { field: 'name', type: 'input', required: true },
-        //   { field: 'code', type: 'input', required: true },
-          // { field: 'supervisor', type: 'select', placeholder: 'Select Supervisor', displayProperty: 'full_name', list: this.fetchedData?.staff_members }
-      //   ],
-      //   tableFields: ['name', 'code'
-      //     // , 'supervisor'
-      //   ],
-      //   path: 'groups',
-      //   objs: 'groups',
-      //   type: 'general',        
-  // }
-
   @Input() tableData:any
   Math  = Math
-  filter: any = {
-    start_date: '',
-    end_date: '',
-    organisation: null,
-    project: null,
-    beneficiary: null,
-    type: 'All Types',
-    search: '',
-    tableData: 'All Donations',
-  };
+  filter: any = {};
   Array = Array;
   selectedItem:any
   menuOpen: boolean = false;
   refreshSelect: boolean = true;
   sortField: string = '';
-  sortDirection: 'asc' | 'desc' = 'desc';
+  sortDirection: 'asc' | 'desc' = 'asc';
   showFiltersModal: boolean = false;
   showAddModal:boolean = false
   fetchedData:any
@@ -94,7 +44,7 @@ export class SmartTableComponent implements OnInit {
   columnFilters: any = {};
   initFields:any[] = []
   showStats:any = true
-  
+
   constructor(private api: ApiService, private confirm: ConfirmModalService) {}
 
   async ngOnInit() {
@@ -108,12 +58,10 @@ export class SmartTableComponent implements OnInit {
       if(this.tableData !== null || this.tableData !== undefined) {
         if(Object.keys(this.tableData?.dataSet[0]).includes('first_name')){
           this.tableData.dataSet = this.tableData?.dataSet?.map((u:any) => {
-            u = {...u, user: {photo: u.photo, first_name: u.first_name, last_name: u.last_name, other_names: u.other_names, user_id: u.user_id }};
+            u = {...u, user: {photo: u.photo ?? u.photo_url, firstName: u.first_name ?? '', lastName: u.last_name ?? '', otherNames: u.other_names ?? '', email: u.email ?? '', userId: u.userId ?? u.admission_no }};
             return u
           });
         }
-        const neededData:any = this.tableData?.neededData ?? []
-        this.fetchedData = await this.api.fetchData([...neededData]);
         this.refreshSelect = false         
         this.updateDateRangeFromdataSet();
         setTimeout(() => {
@@ -137,11 +85,11 @@ export class SmartTableComponent implements OnInit {
 
   updateDateRangeFromdataSet() {
     if (!this.tableData?.dataSet || this.tableData?.dataSet.length === 0) return;
-    const sorteddataSet = [...this.tableData?.dataSet].sort(
+    const sortedDataSet = [...this.tableData?.dataSet].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
-    this.filter.start_date = sorteddataSet[0].date;
-    this.filter.end_date = new Date().toISOString().slice(0, 10);
+    this.filter.startDate = sortedDataSet[0].date;
+    this.filter.endDate = new Date().toISOString().slice(0, 10);
   }
   
 get filtered(): any[] {
@@ -186,7 +134,7 @@ get filtered(): any[] {
     );
   });
 
-  return out; // 🚨 do NOT slice here
+  return out;
 }
 
 get pageItems(): any[] {
@@ -225,20 +173,20 @@ get totalPages(): number {
   }
   
   onStartDateChange(date: string) {
-    if (this.filter?.end_date && new Date(date) > new Date(this.filter?.end_date)) {
+    if (this.filter?.endDate && new Date(date) > new Date(this.filter?.endDate)) {
       this.api.toast.showToast('Start date cannot be later than End date', 'warning');
       return;
     }
-    this.filter.start_date = date;
+    this.filter.startDate = date;
     this.resetPage();
   }
 
   onEndDateChange(date: string) {
-    if (this.filter?.start_date && new Date(date) < new Date(this.filter?.start_date)) {
+    if (this.filter?.startDate && new Date(date) < new Date(this.filter?.startDate)) {
       this.api.toast.showToast('End date cannot be earlier than Start date', 'warning');
       return;
     }
-    this.filter.end_date = date;
+    this.filter.endDate = date;
     this.resetPage();
   }
 
@@ -339,48 +287,39 @@ get totalPages(): number {
     } else {
       delete this.tableData.selectedItem;
     }
-    this.formData = { ...this.tableData, isMultiPart: this.tableData?.isMultiPart ?? false, formFields: this.tableData.formFields, allowDownload: this.tableData?.allowownload ?? false, isEditable: edit ?? true };
+    this.formData = { ...this.tableData, isMultiPart: this.tableData?.isMultiPart ?? false, formFields: this.tableData.formFields, allowDownload: this.tableData?.allowDownload ?? false, isEditable: item ? edit : true, isEditing: item && edit ? true : false };
     this.showAddModal = true;
   }
 
-  editItem(Item: any, action?: string) {
-    this.openAddModal(Item, true);
+  editItem(item: any) {
+    this.openAddModal(item, true);
   }
 
-  viewItem(Item: any) {
-    this.openAddModal(Item, false);
+  viewItem(item: any) {
+    this.openAddModal(item, false);
   }
+  
+  saveItem(item:any, fnx?: string) {
+    const action: string = item.action === 'update' ? 'update_' : 'create_'
+    delete item.action
+      this.api.makeRequest('POST', this.tableData?.path ?? '', {...item, action_type: `${action+this.tableData?.tag.toLowerCase()}`}).then(async (data: any) => {       
+        if(!data){
+          this.tableData.dataSet = data[this.tableData?.tag?.toLowerCase()]
 
-  saveItem(item:any, fnx?:string) {
-    const isAddTable:boolean = this.tableData?.tag === 'Lecturer' || this.tableData?.tag === 'Admin' || this.tableData?.tag === 'Course Rep'
-    isAddTable ? item = { ...item, user_role: this.tableData?.tag?.toLowerCase() } : item
-    let action: string = ''
-    const idx = this.tableData?.dataSet.findIndex((u: any) => u.id === item.id);
-    if (idx !== -1) {
-      action = 'updated'
-      if(!fnx){
-        this.tableData.dataSet[idx] = { ...item };
-      }else{
-        action = fnx
-        this.tableData.dataSet[idx] = { ...item, is_active: true, is_approved: true };
-      }
-    }else{
-      action = 'saved'
-      if(!fnx){
-        this.tableData?.dataSet.push({ ...item, is_new: true});
-      }else{
-        this.tableData?.dataSet.push({ ...item, is_new: true, is_active: true });
-      }
-    }
-    if(Object.keys(this.tableData?.dataSet[0]).includes('first_name')){
-      this.tableData.dataSet = this.tableData?.dataSet?.map((u:any) => {
-        u = {...u, user: {photo: u.photo, first_name: u.first_name, last_name: u.last_name, other_names: u.other_names, user_id: u.user_id }};
-        return u
-      });
-    }
+            if(!this.formData.isEditing){
+              this.tableData.dataSet.push(data[this.tableData?.tag?.toLowerCase()]);
+            }else{
+              const idx = this.tableData?.dataSet?.findIndex((u: any) => u.id === data[this.tableData?.tag?.toLowerCase()].id);
+              if (idx !== -1) {
+                this.tableData.dataSet[idx] = { ...item };
+              }
+            };
+        }else{
+          this.api.toast.showToast(data?.message, 'error');
+        }
+    })
     this.filtered
     this.closeModal();
-    this.api.toast.showToast(`${this.tableData?.tag ?? 'Item'} ${action} sucessfully!`, 'success');
   }
 
   closeModal() {
@@ -413,16 +352,17 @@ get totalPages(): number {
 
   deleteItem(item:any) {
     if (item) {
-      this.tableData.dataSet = this.tableData?.dataSet.filter((u: any) => u.id !== item.id);
-      this.selectedItem = null;
+      this.api.makeRequest('GET', this.tableData?.path ?? '', {id: item.id, action_type: 'delete_item', model: this.tableData?.tag ?? ''}).then(async (data: any) => {
+          this.tableData.dataSet = this.tableData?.dataSet.filter((u: any) => u.id !== item.id);
+          this.selectedItem = null;
+      })
     }
-    this.api.toast.showToast(`${this.tableData?.tag ?? "Item"} deleted successfully!`, 'success')
   }
 
   get getStats() {
     const totalCount = this.tableData?.dataSet?.length;
-    const newCount = this.tableData?.dataSet?.filter((d: any) => d?.is_new).length;
-    const activeCount = this.tableData?.dataSet?.filter((d: any) => d?.is_active).length;
+    const newCount = this.tableData?.dataSet?.filter((d: any) => d?.isNew).length;
+    const activeCount = this.tableData?.dataSet?.filter((d: any) => d?.isActive).length;
     const maleCount= this.tableData?.dataSet?.filter((d: any) => d?.gender === 'Male').length;
     const femaleCount= this.tableData?.dataSet?.filter((d: any) => d?.gender === 'Female').length;
     const totalCash = this.filtered?.filter((d) => d?.donationType === 'Cash').reduce((sum, d) => sum + (d?.amount || 0), 0);
@@ -438,84 +378,10 @@ get totalPages(): number {
   isImageUrl(url: string): boolean {
     return /\.(jpeg|jpg|png|JPG|JPEG|PNG)$/.test(url);
   } 
-  
-  // async saveItem(item: any) {
+
+  requestSwap(item: any) {
     
-  //   this.loader.show();
-
-  //   if (this.formData.selectedItem || item) {
-  //     try {   
-
-  //       if(item.start_time && item.end_time || item.start_date && item.end_date){
-  //         if(item.start_time > item.end_time){
-  //           this.api.toast.showToast("Start time cannot be greater than end time", "error");
-  //           return;
-  //         }else if(item.start_date > item.end_date){
-      //       this.api.toast.showToast("Start date cannot be greater than end date", "error");
-      //       return;
-      //     }
-      //   }
-
-      //   const url = !this.formData.selectedItem ? `${this.tableData?.path}/create/` : `${this.tableData?.path}/${ item.member_id ?? item.id }/update/`;
-      //   let newData:any
-      //   await this.api.makeRequest("POST", url, item).then((res: any) => {
-          
-      //     const reponseData:any = res
-
-      //     if (this.tableData.user && this.tableData.title.toLowerCase().includes('relations')) {
-      //       const user = reponseData[this.tableData?.objs ?? this.tableData?.path].find((d: any) => d.member_id === this.tableData.user.member_id);
-      //       if (user) {
-      //         const userRelations = user?.relations ?? [];
-      //         newData = [...userRelations];
-      //       }
-      //     } else {
-      //       newData =  this.tableData.list_type && this.tableData?.objs ? reponseData[this.tableData?.objs].filter( (d: any) => d.type === this.tableData.list_type ) : reponseData[this.tableData?.objs ?? this.tableData?.path];
-      //       newData.forEach((d: any) => {
-      //         if ('take_attendance' in d) {
-      //           d.take_attendance = d.take_attendance === true ? 'Yes' : 'No';
-      //         }
-      //       });
-      //     }
-          
-      //     this.tableData = {...this.tableData, data: [...newData]}
-      //   })
-
-      // } catch (error) {
-        // this.api.toast.showToast("An error occured. Try again.", "error");
-    //     this.api.toast.showToast( `Issues:<br>Item with same details may already exist.<br>Please check all requirements and try again.`, "error" );
-    //   }
-    // } else {
-    //   this.api.toast.showToast("An error occured. Try again.", "error");
-    // }
-
-    // this.loader.hide();
-    // this.closeModal();
-
-  // }
-
-  // async deleteItem(item: any) {
-
-    // this.loader.show();
-    
-    // if (item) {
-    //   try {
-    //     let freshData:any
-    //     await this.api.makeRequest( "POST", `${this.tableData?.path}/${item.id}/delete/`, {}).then((data: any) => {
-    //         freshData = this.tableData?.objs ? data[this.tableData?.objs].filter( (d: any) => d.type === this.tableData.list_type ) : freshData[this.tableData?.objs ?? this.tableData?.path];
-    //         this.tableData = { ...this.tableData, data: freshData };
-    //       })
-        
-
-    //   } catch (error) {
-    //     if(error){
-    //       this.api.toast.showToast("An error occured. Try again.", "error");
-    //     }
-    //   }
-    // }
-
-    // this.loader.hide();
-    
-  // }
+  }
 
   cancelEdit() {
     this.confirm.openModal({

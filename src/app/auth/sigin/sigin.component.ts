@@ -19,10 +19,12 @@ export class SiginComponent implements OnInit {
   constructor(private router: Router, private api: ApiService) {}
 
   ngOnInit() {
+    
   }
 
   onSubmit() {
-    this.api.fakeSignIn(this.user);
+    // this.api.fakeSignIn(this.user);
+    this.api.signIn(this.user);
   }
 
   async movePage(page: string) {

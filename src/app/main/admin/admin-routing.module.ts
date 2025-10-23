@@ -8,7 +8,6 @@ import { LecturersComponent } from '../lecturers/lecturers.component';
 import { AcademicStructureComponent } from './general-setup/academic-structure/academic-structure.component';
 import { AddLecturerComponent } from './lecturers/add-lecturer/add-lecturer.component';
 import { ManageLecturersComponent } from './lecturers/manage-lecturers/manage-lecturers.component';
-import { CourseRepsComponent } from '../course-reps/course-reps.component';
 import { AddCourseRepComponent } from './course-reps/add-course-rep/add-course-rep.component';
 import { ManageCourseRepsComponent } from './course-reps/manage-course-reps/manage-course-reps.component';
 import { AdminsComponent } from './admins/admins.component';
@@ -17,6 +16,7 @@ import { ManageAdminsComponent } from './admins/manage-admins/manage-admins.comp
 import { CalendarsComponent } from './general-setup/calendars/calendars.component';
 import { TimetablesComponent } from './general-setup/timetables/timetables.component';
 import { ReportsComponent } from '../shared/reports/reports.component';
+import { StudentsComponent } from '../students/students.component';
 
 const routes: Routes = [
   {
@@ -47,20 +47,20 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'course_reps',
-        component: CourseRepsComponent,
+        path: 'students',
+        component: StudentsComponent,
         children: [
           {
-            path: 'add_course_rep',
+            path: 'add_student',
             component: AddCourseRepComponent
           },
           {
-            path: 'manage_course_reps',
+            path: 'manage_students',
             component: ManageCourseRepsComponent
           },
           {
             path: '',
-            redirectTo: 'manage_course_reps',
+            redirectTo: 'manage_students',
             pathMatch: 'full'
           }
         ]

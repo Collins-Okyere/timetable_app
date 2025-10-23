@@ -13,46 +13,39 @@ import { ApiService } from '../../../../../shared/services/api.service';
 export class AcademicLevelsComponent implements OnInit {
 
   tableData:any
-  fetchedData:any
 
   constructor(private api: ApiService){}
 
-  async ngOnInit(){
-    const neededData:any = ['academic_levels'];
-    this.fetchedData = await this.api.fetchData(neededData);
-    if(this.fetchedData?.academic_levels){
-      this.tableData = {
-        title: 'Academic Levels',
-        subTitle: '',
-        tag: 'Level',
-        description: 'List of academic levels',
-        allowAdd: true,
-        neededData: neededData,
-        allowStatCards: true,
-        pageSize: 15,
-        stats: {
-          defaults: ['count', 'active', 'new'],
-          special: []
-        },
-        sortBy: 'name',
-        allowGlobalSearch: true,
-        allowColumnSearch: true,
-        allowDownload: true,
-        allowMenu: true,
-allowEdit: true,
-        allowDelete: true,
-        allowSorting: true,
-        dataSet: this.fetchedData?.academic_levels,
-        formFields: [
-          { field: 'name', type: 'input', required: true },
-          { field: 'code', type: 'input', required: true },
-        ],
-        tableFields: ['name', 'code'],
-        path: 'academic_levels',
-        objs: 'academic_levels',
-        type: 'general',        
-      }
-    }
+  ngOnInit(){
+    this.api.makeRequest('GET', 'general_settings', { action_type: 'get_levels' }).then(async (data: any) => {
+        if(data?.levels){
+          this.tableData = {
+            title: 'Academic Levels',
+            subTitle: '',
+            tag: 'Level',
+            description: 'List of Academic Levels',
+            allowAdd: true,
+            pageSize: 20,
+            sortBy: 'name',
+            allowGlobalSearch: true,
+            allowColumnSearch: true,
+            allowDownload: true,
+            allowMenu: true,
+            allowEdit: true,
+            allowDelete: true,
+            allowSorting: true,
+            dataSet: data?.levels,
+            formFields: [
+              { field: 'name', type: 'input', required: true },
+              { field: 'code', type: 'input', required: true },
+            ],
+            tableFields: ['name', 'code'],
+            path: 'general_settings',
+            objs: 'levels',
+            type: 'general',        
+          }
+        }
+    }) 
   }
     
 }

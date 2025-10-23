@@ -7,7 +7,7 @@ import { SelectInputComponent } from '../../../../shared/reusable-components/sel
 import { ApiService } from '../../../../shared/services/api.service';
 
 @Component({
-  selector: 'app-add-lecturer',
+  selector: 'app-add-student',
   standalone: true,
   imports: [CommonModule, FormsModule, SelectInputComponent],
   providers: [DatePipe],
@@ -16,81 +16,77 @@ import { ApiService } from '../../../../shared/services/api.service';
 })
 export class AddCourseRepComponent {
 
-  userDetails:any
-  lastCourseRepId: string = ''
-  courseRep: any = {
+  lastStudentId: string = ''
+  student: any = {
+    admission_no: null,
     photo: 'assets/user.png',
+    first_name: null,
+    last_name: null,
+    middle_name: null,
     gender: 'Male',
-    faculties: [],
-    courses: [],
-    departments: []
+    program_id: null,
+    level_id: null,
+    email: null,
+    mobile_no: null
   };
   fetchedData:any
   displayImage:any
   refreshSelect = true;
   formValid = false
 
-  constructor(private datePipe: DatePipe, private readonly api: ApiService, private mediaService: MediaUploadService, private router: Router) {}
+  constructor(private readonly api: ApiService, private mediaService: MediaUploadService, private router: Router) {}
 
-  async ngOnInit() {
-    this.setCourseRep();
+  ngOnInit() {
+    this.setStudent();
   }
-  
-  async setCourseRep() {
-    const neededData:any = ['faculties','courses','lecturers','departments']
-    this.refreshSelect = false
-    this.fetchedData = await this.api.fetchData([...neededData])
-    this.displayImage = 'assets/user.png';
-    this.courseRep.user_role = 'lecturer'
-    this.courseRep.user_id = 'lecturer'
-    // await this.api.makeRequest('GET', 'add_lecturers/init', {}).then(async (data: any) => {
-    //   if (data && data.newCourseRepId) {
-    //     this.lastCourseRepId = data.lastCourseRepId;
-    //     this.courseRep.lecturer_id = data.newCourseRepId;
-    //   } else {
-    //     this.courseRep.lecturer_id = ''; 
-    //   }
-    // }).then(() => {
-    //   this.courseRep.photo = 'assets/user.png';
-      setTimeout(() => {
-        this.refreshSelect = true
 
-      })
-    // });
+  async setStudent() {
+    await this.api.makeRequest('GET', 'students', { action_type: 'get_admission_data' }).then(async (data: any) => {
+      if (data) {
+        this.fetchedData = data
+        this.lastStudentId = this.fetchedData.last_student_admission_no;
+        this.student.admission_no = this.fetchedData.next_student_admission_no;
+      } else {
+        this.student.admission_no = ''; 
+      }
+    })
+    this.refreshSelect = false
+    this.displayImage = 'assets/user.png';
+    setTimeout(() => {
+      this.refreshSelect = true
+    })
   }
 
   onSelectionChanged(field: string, value: any) {
-    this.courseRep[field] = value.id ?? value;
+    if(field === 'gender'){
+    this.student[field] = value;
+      return
+    }
+    this.student[field] = value.id ?? value;
   }
   
   async saveCourseRep() {
-    if(this.courseRep.first_name && this.courseRep.gender && this.courseRep.user_role && this.courseRep.faculties && this.courseRep.courses && this.courseRep.departments && this.courseRep.user_id){
+    if( this.student.admission_no && this.student.first_name && this.student.gender && this.student.program_id && this.student.level_id){
       this.formValid = true
     }
     if(!this.formValid){
       this.api.toast.showToast('Please check all required fields.', 'error');
       return
     }
-    const formData = new FormData();
-    const isBlob = this.courseRep.photo instanceof Blob;
+    const isBlob = this.student.photo instanceof Blob;
     if (!isBlob) {
       const fallback = 'assets/user.png';
-      const photoUrl = this.courseRep.photo || fallback;
-      this.courseRep.photo = await this.api.getBlob(photoUrl);
+      const photoUrl = this.student.photo || fallback;
+      const blob = await this.api.getBlob(photoUrl);
+      this.student.photo = await this.api.blobToBase64(blob);
     }
-    formData.append('photo', this.courseRep.photo, 'lecturer-photo.jpg');
-    const lecturerPayload = { ...this.courseRep };
-    delete lecturerPayload.photo;
-    formData.append('lecturer', JSON.stringify(lecturerPayload));
-    const userRole:any = this.api.safeJSONParse('currUser').user_role;
-    // this.api.makeRequest('POST', 'add_lecturers/create/', formData, true).then(async (data: any) => {
-      // if (data.lecturer) {
-      //   this.api.addLocalStorage('tempData', data.lecturer);
-      //   this.router.navigate([`${userRole}/manage_lecturers`]);
-      // }
-    // }).catch((error: any) => {
-    //   this.api.toast.showToast('Please check all required fields.', 'error');
-    // });
+    const studentPayload = { ...this.student };
+    console.log(studentPayload)
+    await this.api.makeRequest('POST', 'students', {...studentPayload, action_type: 'create_student'}).then(async (data: any) => {
+      console.log(data)
+    }).catch((error: any) => {
+      this.api.toast.showToast('Please check all required fields.', 'error');
+    });
     this.reset()
   }
   
@@ -98,14 +94,19 @@ export class AddCourseRepComponent {
     this.refreshSelect = false;
     setTimeout(() => 
       {
-      this.courseRep = {
+      this.student = {
+        admission_no: null,
         photo: 'assets/user.png',
+        first_name: null,
+        last_name: null,
+        middle_name: null,
         gender: 'Male',
-        departments: [],
-        courses: [],
-        faculties: []
+        program_id: null,
+        level_id: null,
+        email: null,
+        mobile_no: null
       };
-      this.setCourseRep();
+      this.setStudent();
       this.refreshSelect = true
     }, 0);
   }
@@ -114,14 +115,14 @@ export class AddCourseRepComponent {
   openUploadModal() {
     this.mediaService.openModal({
       title: 'Upload Avatar',
-      image: this.courseRep.photo,
+      image: this.student.photo,
       okAction: (croppedImage: any) => this.saveImage(croppedImage)
     });
   }  
   
   saveImage(event: any) {
     this.displayImage = event.url
-    this.courseRep.photo = event.blob
+    this.student.photo = event.blob
   }
 
 }

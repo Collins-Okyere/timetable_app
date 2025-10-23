@@ -42,14 +42,14 @@ export class AddLecturerComponent {
     this.refreshSelect = false
     this.fetchedData = await this.api.fetchData([...neededData])
     this.displayImage = 'assets/user.png';
-    this.lecturer.user_role = 'lecturer'
-    this.lecturer.user_id = 'lecturer'
+    this.lecturer.userRole = 'lecturer'
+    this.lecturer.userId = 'lecturer'
     // await this.api.makeRequest('GET', 'add_lecturers/init', {}).then(async (data: any) => {
     //   if (data && data.newLecturerId) {
     //     this.lastLecturerId = data.lastLecturerId;
-    //     this.lecturer.lecturer_id = data.newLecturerId;
+    //     this.lecturer.lecturerId = data.newLecturerId;
     //   } else {
-    //     this.lecturer.lecturer_id = ''; 
+    //     this.lecturer.lecturerId = ''; 
     //   }
     // }).then(() => {
     //   this.lecturer.photo = 'assets/user.png';
@@ -65,7 +65,7 @@ export class AddLecturerComponent {
   }
   
   async saveLecturer() {
-    if(this.lecturer.first_name && this.lecturer.gender && this.lecturer.user_role && this.lecturer.faculties && this.lecturer.courses && this.lecturer.departments && this.lecturer.user_id){
+    if(this.lecturer.firstName && this.lecturer.gender && this.lecturer.userRole && this.lecturer.faculties && this.lecturer.courses && this.lecturer.departments && this.lecturer.userId){
       this.formValid = true
     }
     if(!this.formValid){
@@ -83,7 +83,7 @@ export class AddLecturerComponent {
     const lecturerPayload = { ...this.lecturer };
     delete lecturerPayload.photo;
     formData.append('lecturer', JSON.stringify(lecturerPayload));
-    const userRole:any = this.api.safeJSONParse('currUser').user_role;
+    const userRole:any = this.api.safeJSONParse('currUser').userRole;
     // this.api.makeRequest('POST', 'add_lecturers/create/', formData, true).then(async (data: any) => {
       // if (data.lecturer) {
       //   this.api.addLocalStorage('tempData', data.lecturer);

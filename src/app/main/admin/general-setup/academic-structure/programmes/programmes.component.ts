@@ -3,26 +3,26 @@ import { ApiService } from '../../../../../shared/services/api.service';
 import { SmartTableComponent } from '../../../../../shared/reusable-components/smart-table/smart-table.component';
 
 @Component({
-  selector: 'app-departments',
+  selector: 'app-programmes',
   standalone: true,
   imports: [SmartTableComponent],
-  templateUrl: './departments.component.html',
-  styleUrl: './departments.component.css'
+  templateUrl: './programmes.component.html',
+  styleUrl: './programmes.component.css'
 })
-export class DepartmentsComponent implements OnInit {
+export class ProgrammesComponent implements OnInit {
 
   tableData:any
 
   constructor(private api: ApiService){}
 
   ngOnInit(){
-    this.api.makeRequest('GET', 'general_settings', { action_type: 'get_departments' }).then(async (data: any) => {
-        if(data?.departments){
+    this.api.makeRequest('GET', 'general_settings', { action_type: 'get_programs' }).then(async (data: any) => {
+        if(data?.programs){
           this.tableData = {
-            title: 'Departments',
+            title: 'Programmes',
             subTitle: '',
-            tag: 'Department',
-            description: 'List of departments',
+            tag: 'Program',
+            description: 'List of programmes',
             allowAdd: true,
             pageSize: 20,
             sortBy: 'name',
@@ -33,18 +33,19 @@ export class DepartmentsComponent implements OnInit {
             allowEdit: true,
             allowDelete: true,
             allowSorting: true,
-            dataSet: data?.departments,
+            dataSet: data?.programs,
             formFields: [
-              { field: 'name', type: 'input', required: true },
+              { field: 'course_name', type: 'input', required: true },
               { field: 'code', type: 'input', required: true },
-              { field: 'faculty', type: 'select', placeholder: 'Select Faculty', displayProperty: 'name', list: data?.faculties, required: true },
+              { field: 'faculty_department', type: 'select', placeholder: 'Select Department', displayProperty: 'name', list: data?.departments, required: true },
             ],
-            tableFields: ['name', 'code', 'faculty'],
+            tableFields: ['course_name', 'code', 'faculty_department'],
             path: 'general_settings',
-            objs: 'departments',
+            objs: 'programs',
             type: 'general',        
           }
         }
+      
     })
     
   }

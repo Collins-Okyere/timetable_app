@@ -29,7 +29,7 @@ export class ReportsComponent implements OnInit {
   }
 
   async setTable(){
-    const tableFields:any = this.currUser?.user_role === 'lecturer' ? ["date", "start_time", "end_time", "course", "level", "status"] : ["date", "start_time", "end_time", "course", "level", "lecturer", "status"]
+    const tableFields:any = this.currUser?.userRole === 'lecturer' ? ["date", "startTime", "endTime", "course", "level", "status"] : ["date", "startTime", "endTime", "course", "level", "lecturer", "status"]
     this.tableData = {
       title: 'Reports',
       tag: 'Lectures',

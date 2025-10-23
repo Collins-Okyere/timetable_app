@@ -32,46 +32,46 @@
 
             <div class="lg:col-span-1">              
               <label class="flex justify-between items-center">
-                <label for="username" class="font-medium block text-sm text-slate-900">User ID<span *ngIf="lastCourseRepId" class="text-slate-500 text-sm"> (Last ID - {{lastCourseRepId}}):</span> </label>
+                <label for="admission_no" class="font-medium block text-sm text-slate-900">User ID<span *ngIf="lastStudentId" class="text-slate-500 text-sm"> (Last ID - {{lastStudentId}}):</span> </label>
                 <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
               </label>
               <div class="mt-1">
-                <input type="text" id="username" disabled required name="username" placeholder="Input prefered user ID" [(ngModel)]="courseRep.username" autocomplete="false" class="{{courseRep.username ? 'font-bold' : ''}} bg-emerald-50 placeholder:text-sm appearance-none min-w-0 w-full border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" id="admission_no"  required name="admission_no" placeholder="Prefered Student ID" [(ngModel)]="student.admission_no" autocomplete="false" class="{{student.admission_no ? 'font-bold' : ''}} bg-gray-50 placeholder:text-sm appearance-none min-w-0 w-full border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>
             </div>
 
             <div class="lg:col-span-1">
               <label class="flex justify-between items-center">
-                <label for="first_name" class="block text-sm text-gray-700">First Name </label>
+                <label for="firstName" class="block text-sm text-gray-700">First Name </label>
                 <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
               </label>              
               <div class="mt-1">
-                <input type="text" required name="first_name" placeholder="eg. Simon" [(ngModel)]="courseRep.first_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" required name="firstName" placeholder="eg. Simon" [(ngModel)]="student.first_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>
             </div>
 
-            <div class="lg:col-span-1"><label for="last_name" class="block text-sm text-gray-700">Last Name </label>                 
+            <div class="lg:col-span-1"><label for="lastName" class="block text-sm text-gray-700">Last Name </label>                 
               <div class="mt-1">
-                <input type="text" required name="last_name" placeholder="eg. Peter" [(ngModel)]="courseRep.last_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" required name="lastName" placeholder="eg. Peter" [(ngModel)]="student.last_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>
             </div>
 
             <div class="lg:col-span-1">
               <label class="flex justify-between items-center">
-                <label for="other_names" class="block text-sm text-gray-700">Other Names </label>
+                <label for="otherNames" class="block text-sm text-gray-700">Other Names </label>
                 <!-- <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>   -->
               </label>                    
               <div class="mt-1">
-                <input type="text" required name="last_name" placeholder="eg. Peter" [(ngModel)]="courseRep.other_names" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" required name="lastName" placeholder="eg. Peter" [(ngModel)]="student.middle_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>
             </div>
 
             <div class="lg:col-span-1">
               <label class="flex justify-between items-center">
-                <label for="phone" class="block text-sm text-gray-700"> Phone Number</label>
+                <label for="mobile_no" class="block text-sm text-gray-700"> Phone Number</label>
               </label>
               <div class="mt-1">
-                <input type="text" id="phone" name="phone" placeholder="eg. (+233)-234-56-788" [(ngModel)]="courseRep.phone" autocomplete="false" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" id="mobile_no" name="mobile_no" placeholder="eg. (+233)-234-56-788" [(ngModel)]="student.mobile_no" autocomplete="false" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>            
             </div>
 
@@ -80,7 +80,7 @@
                 <label for="email" class="block text-sm text-gray-700">Email</label>
               </label>
               <div class="mt-1">
-                <input type="email" id="email" name="email" placeholder="eg. abc@gmail.com" [(ngModel)]="courseRep.email" autocomplete="false" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="email" id="email" name="email" placeholder="eg. abc@gmail.com" [(ngModel)]="student.email" autocomplete="false" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>            
             </div>
 
@@ -96,31 +96,21 @@
 
             <div class="lg:col-span-1">           
               <label class="flex justify-between items-center">
-                <label for="faculties" class="block text-sm text-gray-700">Faculties</label>
+                <label for="programs" class="block text-sm text-gray-700">Programme</label>
                 <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
               </label>
               <div class="mt-1">
-                <app-select-input *ngIf="refreshSelect" id="faculties" [selectInputData]="{ items: fetchedData?.faculties, placeholder: 'Select Faculties', displayProperty: 'name', searchProperty: 'name', multiple: true, autoClose: false}" (selectionChanged)="onSelectionChanged('faculties', $event)"></app-select-input>
+                <app-select-input *ngIf="refreshSelect" id="programs" [selectInputData]="{ items: fetchedData?.programs, placeholder: 'Select Programme', displayProperty: 'course_name', searchProperty: 'course_name', autoClose: true}" (selectionChanged)="onSelectionChanged('program_id', $event)"></app-select-input>
               </div>
             </div>
 
             <div class="lg:col-span-1">       
               <label class="flex justify-between items-center">
-                <label for="faculties" class="block text-sm text-gray-700">Departments</label>
+                <label for="levels" class="block text-sm text-gray-700">Level</label>
                 <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
               </label>
               <div class="mt-1">
-                <app-select-input *ngIf="refreshSelect" id="departments" [selectInputData]="{ items: fetchedData?.departments, placeholder: 'Select Department', displayProperty: 'name', searchProperty: 'name', multiple: true, autoClose: false}" (selectionChanged)="onSelectionChanged('departments', $event)"></app-select-input>
-              </div>
-            </div>
-
-            <div class="lg:col-span-1">
-              <label class="flex justify-between items-center">
-                <label for="faculties" class="block text-sm text-gray-700">Courses</label>
-                <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
-              </label>
-              <div class="mt-1">
-                <app-select-input *ngIf="refreshSelect" id="courses" [selectInputData]="{ items: fetchedData?.courses, placeholder: 'Select Course', displayProperty: 'name', searchProperty: 'name', multiple: true, autoClose: false}" (selectionChanged)="onSelectionChanged('courses', $event)"></app-select-input>
+                <app-select-input *ngIf="refreshSelect" id="levels" [selectInputData]="{ items: fetchedData?.levels, placeholder: 'Select Level', displayProperty: 'name', searchProperty: 'name', autoClose: true}" (selectionChanged)="onSelectionChanged('level_id', $event)"></app-select-input>
               </div>
             </div>
 

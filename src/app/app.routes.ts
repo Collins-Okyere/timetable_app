@@ -19,9 +19,9 @@ export const routes: Routes = [
         loadChildren: () => import('./main/lecturers/lecturers.module').then((m) => m.LecturersModule)
     },
     {
-        path: 'course_rep',
+        path: 'student',
         component: MainAppComponent,
-        loadChildren: () => import('./main/course-reps/course-reps.module').then((m) => m.CourseRepModule)
+        loadChildren: () => import('./main/students/students.module').then((m) => m.CourseRepModule)
     },
     {
         path: '',

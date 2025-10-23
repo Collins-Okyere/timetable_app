@@ -38,20 +38,20 @@ export class SelectInputComponent {
 
   ngOnInit() {
     const items = this.selectInputData?.items || [];
-    if (this.selectInputData?.displayProperty === 'full_name') {
+    if (this.selectInputData?.displayProperty === 'fullName') {
       items.forEach((item: any) => {
         let id = item.member_id ?? item.staff_id ?? item.employee_id ?? item.student_id;
-        item.name = `${item.last_name ?? ''} ${item.other_names ?? ''} ${item.first_name ?? ''}`.trim() + (id ? ` (${id})` : '');
+        item.name = `${item.lastName ?? ''} ${item.otherNames ?? ''} ${item.firstName ?? ''}`.trim() + (id ? ` (${id})` : '');
       });
       // if (this.selectInputData?.defaultValue) {
       //   let d = this.selectInputData.defaultValue;
       //   let id = d.member_id ?? d.staff_id ?? d.employee_id ?? d.student_id;
-      //   d.name = `${d.last_name ?? ''} ${d.other_names ?? ''} ${d.first_name ?? ''}`.trim() + (id ? ` (${id})` : '');
+      //   d.name = `${d.lastName ?? ''} ${d.otherNames ?? ''} ${d.firstName ?? ''}`.trim() + (id ? ` (${id})` : '');
       // }
     }
     if (this.selectInputData?.defaultValue) {
       if (this.selectInputData?.multiple) {
-        this.selectedItems = items.filter((item: any) =>
+        this.selectedItems = items?.filter((item: any) =>
           this.selectInputData?.defaultValue?.some((def: any) => this.matchItems(def, item))
         );
       } else {
@@ -82,7 +82,7 @@ export class SelectInputComponent {
       return item;
     }
     const prop = this.selectInputData.displayProperty;
-    return item[prop] ?? item.full_name ?? item.name ?? '';
+    return item[prop] ?? item.fullName ?? item.name ?? '';
   }
 
   filterItems(): void {
@@ -99,8 +99,8 @@ export class SelectInputComponent {
         return item.toLowerCase().includes(search);
       }
       let displayValue = '';
-      if (displayField === 'full_name') {
-        displayValue = `${item.last_name || ''} ${item.other_names || ''} ${item.first_name || ''}`.trim();
+      if (displayField === 'fullName') {
+        displayValue = `${item.lastName || ''} ${item.otherNames || ''} ${item.firstName || ''}`.trim();
       } else {
         displayValue = item[displayField] || '';
       }

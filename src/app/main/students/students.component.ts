@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-course-reps',
+  selector: 'app-students',
   standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './course-reps.component.html',
-  styleUrl: './course-reps.component.css'
+  templateUrl: './students.component.html',
+  styleUrl: './students.component.css'
 })
-export class CourseRepsComponent {
+export class StudentsComponent {
 
 }

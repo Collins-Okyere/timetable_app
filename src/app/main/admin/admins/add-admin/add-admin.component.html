@@ -37,29 +37,29 @@
 
             <div class="lg:col-span-1">
               <label class="flex justify-between items-center">
-                <label for="first_name" class="block text-sm text-gray-700">First Name </label>
+                <label for="firstName" class="block text-sm text-gray-700">First Name </label>
                 <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
               </label>              
               <div class="mt-1">
-                <input type="text" required name="first_name" placeholder="eg. Simon" [(ngModel)]="admin.first_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" required name="firstName" placeholder="eg. Simon" [(ngModel)]="admin.firstName" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>
             </div>
 
             <div class="lg:col-span-1">
               <label class="flex justify-between items-center">
-                <label for="last_name" class="block text-sm text-gray-700">Last Name </label>
+                <label for="lastName" class="block text-sm text-gray-700">Last Name </label>
               </label>                    
               <div class="mt-1">
-                <input type="text" name="last_name" placeholder="eg. Peter" [(ngModel)]="admin.last_name" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" name="lastName" placeholder="eg. Peter" [(ngModel)]="admin.lastName" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>
             </div>
 
             <div class="lg:col-span-1">
               <label class="flex justify-between items-center">
-                <label for="other_names" class="block text-sm text-gray-700">Other Names </label>
+                <label for="otherNames" class="block text-sm text-gray-700">Other Names </label>
               </label>                    
               <div class="mt-1">
-                <input type="text" name="last_name" placeholder="eg. Peter" [(ngModel)]="admin.other_names" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <input type="text" name="lastName" placeholder="eg. Peter" [(ngModel)]="admin.otherNames" autocomplete="true" class="placeholder:text-sm appearance-none min-w-0 w-full bg-white border border-slate-300 rounded-md shadow-sm py-2 px-4 text-base text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
               </div>
             </div>
 
@@ -97,7 +97,7 @@
                 <label class="flex justify-end space-x-3 items-center whitespace-nowrap mx-2 text-red-700">*</label>  
               </label>
               <div class="mt-1">
-                <app-select-input *ngIf="refreshSelect" id="user_role" [selectInputData]="{ items: ['admin', 'lecturer', 'course_rep'], placeholder: 'Select Group(s)', displayProperty: 'name', searchProperty: 'name', defaultValue: 'admin', autoClose: true }" (selectionChanged)="onSelectionChanged('user_role', $event)"></app-select-input>
+                <app-select-input *ngIf="refreshSelect" id="userRole" [selectInputData]="{ items: ['admin', 'lecturer', 'courseRep'], placeholder: 'Select Group(s)', displayProperty: 'name', searchProperty: 'name', defaultValue: 'admin', autoClose: true }" (selectionChanged)="onSelectionChanged('userRole', $event)"></app-select-input>
               </div>
             </div>
 

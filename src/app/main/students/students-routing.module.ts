@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from '../shared/dashboard/dashboard.component';
 import { ProfileComponent } from '../shared/profile/profile.component';
-import { CourseRepsComponent } from './course-reps.component';
-import { TimetableComponent } from '../shared/timetable/timetable.component';
+import { StudentsComponent } from './students.component';
 import { ReportsComponent } from '../shared/reports/reports.component';
+import { TimetableComponent } from '../shared/timetable/timetable.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: CourseRepsComponent,
+    component: StudentsComponent,
     children: [
       {
         path: 'dashboard',
@@ -44,4 +44,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class CourseRepsRoutingModule { }
+export class StudentsRoutingModule { }

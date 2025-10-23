@@ -11,7 +11,7 @@
         </p>
       </div>
 
-      <!-- <div *ngIf="user?.user_role.includes('admin')" class="flex gap-3">
+      <!-- <div *ngIf="user?.user_role ==='admin'" class="flex gap-3">
         <button
           class="px-4 py-2 bg-white border rounded-xl shadow text-sm transition-all duration-200 ease-in-out hover:shadow-md hover:scale-105 active:scale-95">
           Import Data
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Lecturers Overview -->
-    <div *ngIf="user?.user_role.includes('admin')" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div *ngIf="user?.user_role === 'admin'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
       <div class="bg-emerald-700 text-white rounded-2xl p-6 shadow flex flex-col">
         <span class="text-sm">Total Lecturers</span>
@@ -77,7 +77,7 @@
     </div>
 
     <!-- Today's Lessons -->
-    <div class="grid grid-cols-1 {{user?.user_role.includes('admin') ? 'md:grid-cols-5' : 'md:grid-cols-4'}} gap-4">
+    <div class="grid grid-cols-1 {{user?.user_role ==='admin' ? 'md:grid-cols-5' : 'md:grid-cols-4'}} gap-4">
 
       <div class="bg-gray-200 text-emerald-700 rounded-2xl p-6 shadow flex flex-col">
         <span class="text-sm">Today's Lessons</span>
@@ -103,7 +103,7 @@
         <span class="text-xs text-yellow-600 mt-1">{{ fetchedData?.lessons?.today?.ongoing?.percent }}% of Today's total</span>
       </div>
 
-      <div *ngIf="user?.user_role.includes('admin')" class="bg-white rounded-2xl p-6 shadow flex flex-col">
+      <div *ngIf="user?.user_role ==='admin'" class="bg-white rounded-2xl p-6 shadow flex flex-col">
         <span class="text-sm text-gray-500">Pending</span>
         <span class="text-2xl font-semibold">{{ fetchedData?.lessons?.today?.pending?.count }}</span>
         <span class="text-xs text-yellow-600 mt-1">{{ fetchedData?.lessons?.today?.pending?.percent }}% of Today's total</span>
@@ -115,7 +115,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
       <!-- Attendance Analytics -->
-      <div *ngIf="user?.user_role !== 'course_rep'" class="bg-white rounded-2xl p-6 shadow">
+      <div *ngIf="user?.user_role !== 'student'" class="bg-white rounded-2xl p-6 shadow">
         <h2 class="text-sm font-medium text-gray-700 mb-4">Attendance Analytics</h2>
 
         <div class="h-64">
@@ -126,7 +126,7 @@
       </div>
 
       <!-- Attendance Progress -->
-      <div *ngIf="user?.user_role !== 'course_rep'" class="bg-white rounded-2xl p-6 shadow flex flex-col items-center justify-center">
+      <div *ngIf="user?.user_role !== 'student'" class="bg-white rounded-2xl p-6 shadow flex flex-col items-center justify-center">
         <h2 class="text-sm font-medium text-gray-700 mb-4">Attendance Progress</h2>
         <div class="relative w-32 h-32">
           <svg class="w-full h-full transform -rotate-90">
@@ -175,7 +175,7 @@
       </div>
 
       <!-- Lecturer Monitoring -->
-      <div *ngIf="user?.user_role.includes('admin')" class="bg-white rounded-2xl p-6 shadow space-y-6">
+      <div *ngIf="user?.user_role ==='admin'" class="bg-white rounded-2xl p-6 shadow space-y-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-sm font-medium text-gray-700">Lecturer Monitoring</h2>
           <button
@@ -197,7 +197,7 @@
       </div>
 
       <!-- Ongoing Class Tracker -->
-      <div *ngIf="!user?.user_role.includes('admin')" class="bg-emerald-900 text-white rounded-2xl p-6 shadow flex flex-col items-center justify-center">
+      <div *ngIf="user?.user_role !== 'admin'" class="bg-emerald-900 text-white rounded-2xl p-6 shadow flex flex-col items-center justify-center">
         <h2 class="text-sm font-medium mb-4">Ongoing Class</h2>
         <div class="text-3xl font-bold mb-4">{{ fetchedData?.ongoingClass?.time }}</div>
         <p class="text-sm mb-4">{{ fetchedData?.ongoingClass?.lecturer }} — {{ fetchedData?.ongoingClass?.subject }}</p>

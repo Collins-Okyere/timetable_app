@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
+import { NonDbService } from '../../../shared/services/nondb.service';
 
 @Component({ 
   selector: 'app-dashboard',
@@ -18,10 +19,12 @@ export class DashboardComponent implements OnInit {
   attendanceChartData!: ChartConfiguration<'bar'>['data'];
   attendanceChartOptions: ChartConfiguration<'bar'>['options'] = {};
   
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService, private nonDB: NonDbService) { }
 
   async ngOnInit(){
-    this.user = this.api.safeJSONParse('currUser')
+    setTimeout(() => {
+      this.user = this.nonDB.currUser
+    }, 500)
     const neededData: any = ['dashboardInfo'];
     const data:any =  await this.api.fetchData([neededData])
     if(data){

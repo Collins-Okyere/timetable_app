@@ -12,61 +12,60 @@ import { CommonModule } from '@angular/common';
 })
 export class ManageCourseRepsComponent {
 
-  course_reps: any = [];
   sendObj: any
   tableData:any
   fetchedData:any
-  neededData:any
 
   constructor(private api: ApiService){}
 
   async ngOnInit(){ 
-    this.neededData = ['faculties','courses','course_reps','departments']
-    this.fetchedData = await this.api.fetchData(this.neededData)
-    this.course_reps = this.fetchedData?.course_reps
-    this.setTable()   
+    await this.api.makeRequest('GET', 'students', { action_type: 'get_students' }).then(async (data: any) => {
+      if(data){
+        this.fetchedData = data;
+        this.setTable()   
+      }
+    })
   }
 
-  async setTable(){
+  setTable(){
     this.tableData = {
-      title: 'Course Reps',
+      title: 'Students',
       subTitle: '',
-      tag: 'Course Rep',
-      description: 'List of Course Reps',
+      tag: 'Student',
+      description: 'List of Students',
       allowAdd: true,
-      neededData: this.neededData,
-      sortBy: "first_name",
-      allowStatCards: true,
+      // neededData: this.neededData,
+      sortBy: "full_name",
+      // allowStatCards: true,
       pageSize: 15,
-      stats: {
-        defaults: ['count', 'gender', 'active', 'new'],
-        special: []
-      },
-      isMultiPart: false,
+      // stats: {
+      //   defaults: ['count', 'gender', 'active', 'new'],
+      //   special: []
+      // },
+      // isMultiPart: false,
       allowGlobalSearch: true,
       allowColumnSearch: true,
-      allowDownload: true,
+      // allowDownload: true,
       allowMenu: true,
-allowEdit: true,
+      allowEdit: true,
       allowDelete: true,
       allowSorting: true,
-      dataSet: this.course_reps,
+      dataSet: this.fetchedData?.students,
       formFields: [
-        { field: "user_id", type: "input",  required: true, placeholder: 'User ID', disabled: true },
+        { field: "admission_no", type: "input", value: this.fetchedData?.next_student_admission_no,  required: true, placeholder: 'Admission Number', disabled: true },
         { field: "first_name", type: "input",  required: true, placeholder: 'Enter First Name'},
         { field: "last_name", type: "input", placeholder: 'Enter Last Name'},
-        { field: "other_names", type: "input", placeholder: 'Enter Other Names'},
-        { field: "phone", type: "input", placeholder: 'Phone'},     
-        { field: "email", type: "input", placeholder: 'Email'},     
+        { field: "middle_name", type: "input", placeholder: 'Enter Other Names'},
+        { field: "mobile_no", type: "input", placeholder: 'Enter Phone'},     
+        { field: "email", type: "input", placeholder: 'Enter Email'},     
         { field: "gender", type: "select", list: ['Male', 'Female'], required: true },
-        { field: "faculty", type: "select", list: this.fetchedData?.faculties, required: true },
-        { field: "department", type: "select", list: this.fetchedData?.departments, required: true },
-        { field: "courses", type: "select", list: this.fetchedData?.courses, multiple: true, autoClose: false, required: true },
+        { field: "level_name", type: "select", list: this.fetchedData?.levels, required: true },
+        { field: "program_name", type: "select", list: this.fetchedData?.programs, displayProperty: 'course_name', required: true },
       ],
-      tableFields: ["user", "faculty", "department", "courses"],
-      path: 'course_reps',
-      objs: 'course_reps',
-      type: 'general',        
+      tableFields: ["full_name", "gender", "mobile_no", "level_name", "program_name", ],
+      path: 'students',
+      objs: 'students',
+      type: 'user_list',        
     }
   }
 

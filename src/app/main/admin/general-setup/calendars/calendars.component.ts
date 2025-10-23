@@ -48,7 +48,7 @@ export class CalendarsComponent implements OnInit {
       allowDownload: true,
       allowMenu: true,
 allowEdit: true,
-      allowApprove: true,
+      allowApproval: true,
       allowDelete: true,
       allowSorting: true,
       dataSet: this.calendars,

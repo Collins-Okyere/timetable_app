@@ -4,7 +4,7 @@
 
         <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mx-3 lg:mx-0 mb-3">
             <div>
-                <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">{{user?.user_role === 'lecturer' ? 'My' : ''}} {{tableData?.title ?? tableData?.subTitle ?? tableData?.tag ??  'Table'}} {{tableData?.subTitle ? ' — '+tableData?.subTitle : ''}}</h1>
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">{{user?.userRole === 'lecturer' ? 'My' : ''}} {{tableData?.title ?? tableData?.subTitle ?? tableData?.tag ??  'Table'}} {{tableData?.subTitle ? ' — '+tableData?.subTitle : ''}}</h1>
                 <p *ngIf="tableData?.description" class="text-sm text-gray-700 mt-1">{{tableData?.description}}</p>
             </div>
             <button *ngIf="tableData?.allowAdd" (click)="openAddModal()" class="px-2 py-2 lg:px-4 lg:py-2 rounded bg-emerald-600 text-white hover:bg-emerald-700 text-sm lg:text-normal"> + Add {{tableData?.tag ?? 'Item'}} </button>
@@ -17,12 +17,12 @@
 
                 <div *ngIf="tableData?.filters?.filterBy?.length !== 0 && tableData?.filters?.filterBy?.includes('date')">
                     <label class="block text-xs text-gray-600 mb-1">From</label>
-                    <input type="date" [(ngModel)]="filter.start_date" (ngModelChange)="onStartDateChange($event)" class="w-full p-2 border rounded-md" />
+                    <input type="date" [(ngModel)]="filter.startDate" (ngModelChange)="onStartDateChange($event)" class="w-full p-2 border rounded-md" />
                 </div>
 
                 <div *ngIf="tableData?.filters?.filterBy?.length !== 0 && tableData?.filters?.filterBy?.includes('date')">
                     <label class="block text-xs text-gray-600 mb-1">To</label>
-                    <input type="date" [(ngModel)]="filter.end_date" (ngModelChange)="onEndDateChange($event)" class="w-full p-2 border rounded-md" />
+                    <input type="date" [(ngModel)]="filter.endDate" (ngModelChange)="onEndDateChange($event)" class="w-full p-2 border rounded-md" />
                 </div>
 
                 <div *ngIf="tableData?.filters?.dataSets > 0">
@@ -160,13 +160,11 @@
                                 <ul class="py-2 text-sm text-gray-700">
                                     
                                     <li>
-                                        <button (click)="exportPDF()" class="block w-full text-center px-4 py-2 hover:bg-gray-100">Print
-                                            PDF</button>
+                                        <button (click)="exportPDF()" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Print PDF</button>
                                     </li>
 
                                     <li>
-                                        <button (click)="exportCSV()" class="block w-full text-center px-4 py-2 hover:bg-gray-100">Export as
-                                            CSV</button>
+                                        <button (click)="exportCSV()" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Export as CSV</button>
                                     </li>
 
                                 </ul>
@@ -190,7 +188,7 @@
                         
                         <thead class="bg-gray-100">
                             <tr>
-                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-900">Sn.</th>
+                                <th scope="col" class="px-4 py-3 text-xs font-medium text-gray-900 text-center">Sn.</th>
                                 <th scope="col" *ngFor="let col of tableHeaders; let i = index; let isLast = last" class="cursor-pointer px-4 py-2 {{tableData?.allowColumnSearch ? 'text-center' : 'text-left' }} text-xs font-medium text-gray-900 space-y-1">
                                     <div (click)="setSort( tableData?.allowSorting ? col : null)" [ngClass]="{'flex justify-center' : tableData?.allowColumnSearch, 'text-left': !tableData?.allowColumnSearch }" class="items-center">
                                         {{col | capitalizeWords}} <span *ngIf="tableData?.allowSorting && sortField === col" class="ml-2"> {{ sortDirection === 'asc' ? '▲' : '▼' }} </span>
@@ -205,25 +203,25 @@
                             
                             <tr *ngFor="let item of pageItems; let i = index">
                             
-                                <td class="whitespace-nowrap p-3 font-bold text-sm text-gray-900">
+                                <td class="whitespace-nowrap p-3 font-bold text-sm text-gray-900 text-center">
                                     {{ (page - 1) * tableData?.pageSize + i + 1 }}.
                                 </td>
 
                                 <td *ngFor="let key of keys" class="whitespace-nowrap p-3 text-gray-900">
 
-                                    <div *ngIf="!Array.isArray(item[key])" class="whitespace-nowrap text-sm space-x-2 flex items-center">
-
+                                    <div *ngIf="!Array.isArray(item[key])" class="whitespace-nowrap text-sm space-x-2 flex items-center" [ngClass]="{ 'justify-center' : key === 'code' || key === 'status' || key.includes('role') || key.includes('date') || key.includes('time') || key.includes('level')}" >
+                                            
                                         <div *ngIf="item[key]?.photo || item[key]?.image || item[key]?.logo || item[key]?.flag || isImageUrl(item[key])" class="avatar">
                                             <div class="mask mask-squircle h-8 w-8">
                                                 <img [src]="item[key]?.photo ?? item[key]?.image ?? item[key]?.logo ?? item[key]?.flag ?? item[key]">
                                             </div>
                                         </div>
             
-                                        <div class="space-y-1" [ngClass]="{'text-gray-400': !item[key]?.name || !item[key], 'text-gray-900': item[key]?.name || item[key], 'hidden': isImageUrl(item[key]), 'bg-green-100 text-green-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === true, 'bg-red-100 text-red-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === false||  item[key] === 'Missed', 'bg-green-100 text-green-700': item[key] === 'super_admin' ||  item[key] === 'Completed', 'bg-blue-50 text-blue-700': item[key] === 'admin' || item[key] === 'Swapped', 'bg-gray-100 text-gray-700': item[key] === 'lecturer' || item[key] === 'course_rep', 'bg-yellow-50 text-yellow-700': item[key] === 'Pending', 'p-0.5 px-2 rounded-md': key === 'user_role' || key === 'status' }">
+                                        <div class="space-y-1" [ngClass]="{'text-gray-400': !item[key]?.name || !item[key], 'text-gray-900': item[key]?.name || item[key], 'hidden': isImageUrl(item[key]), 'bg-green-100 text-green-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === true, 'bg-red-100 text-red-800 px-2 py-0.5 rounded-2xl': typeof item[key] === 'boolean' && item[key] === false||  item[key] === 'Missed', 'bg-green-100 text-green-700': item[key] === 'superAdmin' ||  item[key] === 'Completed', 'bg-blue-50 text-blue-600': item[key] === 'admin' || item[key] === 'Swapped', 'bg-gray-100 text-gray-700': item[key] === 'lecturer' || item[key] === 'courseRep', 'bg-yellow-50 text-yellow-700': item[key] === 'Pending', 'p-0.5 px-2 rounded-md': key === 'userRole' || key === 'status' }">
                                             <div class="font-medium whitespace-nowrap text-sm"> 
-                                                {{item[key]?.name ?? ( item[key]?.first_name ? item[key]?.first_name + ' ' + (item[key]?.other_names ? item[key]?.other_names + ' ' : '') + (item[key]?.last_name ?? '') + (item[key]?.user_id ? ' (' + item[key]?.user_id + ')' : '') : item[key]  | capitalizeWords ) ?? '(Empty)' }}
+                                                {{item[key]?.course_name ? item[key]?.course_name : item[key]?.course_name ? item[key]?.course_name : item[key]?.name ?? ( item[key]?.firstName ? item[key]?.firstName + ' ' + (item[key]?.otherNames ? item[key]?.otherNames + ' ' : '') + (item[key]?.lastName ?? '') + (item[key]?.userId ? ' (' + item[key]?.userId + ')' : '') : item[key]  | capitalizeWords ) ?? '(Empty)' }}
                                             </div>
-                                            <div *ngIf="item[key]?.member_id || item[key]?.staff_id" class="text-gray-400">ID: <span class="text-gray-500">{{item[key]?.member_id ?? item[key]?.staff_id}}</span></div>
+                                            <div *ngIf="item[key]?.memberId || item[key]?.staffId || item[key]?.admission_no" class="text-gray-400">ID: <span class="text-gray-500">{{item[key]?.memberId ?? item[key]?.staffId ?? item[key]?.admission_no}}</span></div>
                                         </div>
 
                                     </div>
@@ -231,7 +229,7 @@
                                     <div *ngIf="Array.isArray(item[key])" class="text-sm space-y-1">
                                         <ul class="text-sm space-y-1">
                                             <li *ngFor="let subItem of item[key]" class="flex flex-wrap items-center space-x-1" [ngClass]="{'bg-green-100 text-green-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === true, 'bg-red-100 text-red-800 px-2 py-1 rounded-2xl': typeof item[key] === 'boolean' && item[key] === false }">
-                                                <span [ngClass]="{'text-gray-400': !subItem?.name }"> {{ subItem?.name ? '• ' + subItem.name : subItem && !subItem.name ? '• ' + subItem : '(Empty)' }} </span>
+                                                <span [ngClass]="{'text-gray-700': !subItem?.name }"> {{ subItem?.name ? '• ' + subItem.name : subItem && !subItem.name ? '• ' + subItem : '(Empty)' }} </span>
                                             </li>
                                         </ul>
                                     </div>   
@@ -239,26 +237,27 @@
                                 </td>
                                 
                                 <td *ngIf="tableData?.allowMenu" class="whitespace-nowrap p-3 text-right text-xs font-medium space-x-2">
-                                    <div class="inline-block text-right">
-                                        
-                                        <button (focus)="item.showMenu = !item.showMenu" (blur)="item.showMenu = !item.showMenu" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
-                                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
+                                    <div class="relative inline-block text-right group">
+
+                                        <button class="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+                                            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
                                         </button>
-                                        
-                                        <div *ngIf="item.showMenu" class="origin-top-right absolute right-28 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+
+                                        <div class="hidden group-hover:block absolute right-0 mt-0 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                                             <div class="py-1 text-sm text-gray-700">
-                                                <button (click)="viewItem(item);" class="block w-full text-left px-4 py-2 hover:bg-gray-100">View</button>
-                                                <button *ngIf="tableData?.allowEdit" (click)="editItem(item);" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
-                                                <button *ngIf="tableData?.allowApprove && !item?.is_approved" (click)="saveItem(item, 'completed');" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Approve</button>
-                                                <button *ngIf="tableData?.allowSwap && !item?.is_swapped" (click)="editItem(item, 'swapped');" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Swap</button>
-                                                <button *ngIf="tableData?.allowDelete" (click)="openConfirmModal(item)" class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Delete</button>
+                                                <button (click)="viewItem(item)" type="button" class="block w-full text-left px-4 py-2 hover:bg-gray-100">View</button>
+                                                <button *ngIf="tableData?.allowEdit" (click)="editItem(item)" type="button" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
+                                                <button *ngIf="tableData?.allowApprove && !item?.is_approved" (click)="saveItem(item, 'completed')" type="button" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Approve</button>
+                                                <button *ngIf="tableData?.allowSwapping && !item?.is_swapped" (click)="requestSwap(item)" type="button" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Swap</button>
+                                                <button *ngIf="tableData?.allowDelete" (click)="openConfirmModal(item)" type="button" class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Delete</button>
                                             </div>
                                         </div>
 
                                     </div>
                                 </td>
+
                             </tr>
 
                         </tbody>
@@ -313,12 +312,12 @@
 
                         <div>
                             <label class="block text-xs text-gray-600 mb-1">From</label>
-                            <input type="date" [(ngModel)]="filter.start_date" (ngModelChange)="resetPage()" class="w-full p-2 border rounded-md" />
+                            <input type="date" [(ngModel)]="filter.startDate" (ngModelChange)="resetPage()" class="w-full p-2 border rounded-md" />
                         </div>
 
                         <div>
                             <label class="block text-xs text-gray-600 mb-1">To</label>
-                            <input type="date" [(ngModel)]="filter.end_date" (ngModelChange)="resetPage()" class="w-full p-2 border rounded-md" />
+                            <input type="date" [(ngModel)]="filter.endDate" (ngModelChange)="resetPage()" class="w-full p-2 border rounded-md" />
                         </div>
 
                         <div>

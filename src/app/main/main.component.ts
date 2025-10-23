@@ -48,19 +48,22 @@ export class MainAppComponent implements OnInit {
     this.sidebarService.isSidebarOpen$.subscribe((isOpen: boolean) => {
       this.isSidebarOpen = isOpen;
     });
+    
     this.initData();
-    this.nonDB = this.noDB
   }
 
   private initData() {
-    this.userRole = localStorage.getItem('userRole') ?? '';  
-    this.currUser = this.api.safeJSONParse('currUser');
+    setTimeout(() => {
+    this.currUser = this.noDB.currUser
+    this.userRole = this.noDB.currUser?.user_role; 
     if (this.userRole && this.noDB?.menu) {
       this.getMenu()
     } else {
       this.api.signOut();
       this.api.toast.showToast("An error occured. Please try again.", 'error');
-    }    
+    }   
+      
+    }, 500) 
   }
 
   toggleSidebar() {

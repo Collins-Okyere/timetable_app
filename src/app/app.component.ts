@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { ApiService } from './shared/services/api.service';
 import { MediaUploadComponent } from './shared/reusable-components/media-upload/media-upload.component';
 import { ConfirmModalComponent } from './shared/reusable-components/modals/confirm-modal/confirm-modal.component';
@@ -13,15 +13,9 @@ import { ToastComponent } from './shared/reusable-components/toast/toast.compone
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent{
 
-  title = 'timetable';
-
-  constructor(private router: Router, private api: ApiService) { }
-  
-  ngOnInit(){
-    this.api.initData();
-  }
+  title = 'campus_flow';
 
 
 }

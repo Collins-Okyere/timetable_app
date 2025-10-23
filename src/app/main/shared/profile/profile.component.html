@@ -15,14 +15,14 @@
                 </button>
             </div>
 
-            <h2 class="mt-4 text-xl font-semibold">{{ user?.first_name }} {{ user?.last_name }} {{user?.other_names}}</h2>
+            <h2 class="mt-4 text-xl font-semibold">{{user?.firstName ?? ''}} {{ user?.firstName ?? '' }} {{ user?.lastName ?? '' }} {{user?.otherNames ?? ''}}</h2>
 
             <p class="text-gray-500 text-sm mt-1">{{ user?.country?.name }}</p>
 
             <div class="mt-2 flex justify-center items-center space-x-1">
                 <span class="text-yellow-500 text-lg">⭐</span>
                 <span class="font-medium">{{ user?.rating }}</span>
-                <span class="ml-2 text-xs bg-gray-100 px-2 py-0.5 rounded-full">{{user?.user_role | capitalizeWords}}</span>
+                <span class="ml-2 text-xs bg-gray-100 px-2 py-0.5 rounded-full">{{user?.userRole | capitalizeWords}}</span>
             </div>
 
         </div>
@@ -41,13 +41,13 @@
             <div  class="space-y-4 py-6 px-2 lg:p-6">
                  
                 <label class="block text-sm font-medium">First Name</label>
-                <input [(ngModel)]="newUser.first_name" [placeholder]="!isEditing ? '(Empty)' : 'Enter First Name'" type="text" [disabled]="!isEditing" class="w-full {{isEditing ? 'border rounded mt-1' : '' }} p-2 px-3" name="first_name" />
+                <input [(ngModel)]="newUser.firstName" [placeholder]="!isEditing ? '(Empty)' : 'Enter First Name'" type="text" [disabled]="!isEditing" class="w-full {{isEditing ? 'border rounded mt-1' : '' }} p-2 px-3" name="firstName" />
                  
                 <label class="block text-sm font-medium">Last Name</label>
-                <input [(ngModel)]="newUser.last_name" [placeholder]="!isEditing ? '(Empty)' : 'Enter Last Name'" type="text" [disabled]="!isEditing" class="w-full {{isEditing ? 'border rounded mt-1' : '' }} p-2 px-3" name="last_name" />
+                <input [(ngModel)]="newUser.lastName" [placeholder]="!isEditing ? '(Empty)' : 'Enter Last Name'" type="text" [disabled]="!isEditing" class="w-full {{isEditing ? 'border rounded mt-1' : '' }} p-2 px-3" name="lastName" />
                  
                 <label class="block text-sm font-medium">Other Name(s)</label>
-                <input [(ngModel)]="newUser.other_names" [placeholder]="!isEditing ? '(Empty)' : 'Enter Other Name'" type="text" [disabled]="!isEditing" class="w-full {{isEditing ? 'border rounded mt-1' : '' }} p-2 px-3" name="other_names" />
+                <input [(ngModel)]="newUser.otherNames" [placeholder]="!isEditing ? '(Empty)' : 'Enter Other Name'" type="text" [disabled]="!isEditing" class="w-full {{isEditing ? 'border rounded mt-1' : '' }} p-2 px-3" name="otherNames" />
 
                 <label class="block text-sm font-medium mt-4">Phone</label>
                 <input [(ngModel)]="newUser.phone" [placeholder]="!isEditing ? '(Empty)' : 'Enter Phone Number'" type="text" [disabled]="!isEditing" class="w-full {{isEditing ? 'border rounded mt-1' : '' }} p-2 px-3" name="phone" />

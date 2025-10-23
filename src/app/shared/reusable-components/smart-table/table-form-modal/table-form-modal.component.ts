@@ -42,7 +42,8 @@ export class TableFormModalComponent implements OnInit {
   firstPage:boolean = true
   fetchedData:any
   refreshSelect:boolean = true
-
+  isEditing:boolean = false
+  isSwapping:boolean = false
   constructor(
     private readonly mediaService: MediaUploadService,
     private readonly api: ApiService
@@ -51,7 +52,7 @@ export class TableFormModalComponent implements OnInit {
   ngOnInit(): void {
     this.refreshSelect = false
     setTimeout(() => {
-
+      this.isEditing = this.formData?.isEditable
       if (this.formData.selectedItem) {
         this.formModel = { ...this.formData.selectedItem };
       }
@@ -90,7 +91,12 @@ export class TableFormModalComponent implements OnInit {
   }
 
   onSubmit() {
-    let item:any = {...this.formModel,  }
+    let item:any
+    if(this.formData.isEditing){
+      item = {...this.formModel, action: 'update'}
+    }else{
+      item = {...this.formModel }
+    }
     if(this.formModel.activities){
       item = {...this.formModel, activities: this.activityList}
     }
@@ -112,14 +118,14 @@ export class TableFormModalComponent implements OnInit {
   }
 
   editForm(){
-    this.formData.isEditable = !this.formData.isEditable
+    this.isEditing= !this.isEditing
   }
 
   getDisplayValue(value: any, displayProp: string) {
     if(!this.formData.isEditable){
       if (!value) return '';
-      if (value.first_name || value.last_name || value.other_name) {
-        return [value.first_name, value.other_name, value.last_name].filter(Boolean).join(' ');
+      if (value.firstName || value.lastName || value.otherName) {
+        return [value.firstName, value.otherName, value.lastName].filter(Boolean).join(' ');
       }
       if (typeof value === 'object' && displayProp in value) {
         return value[displayProp];
@@ -134,14 +140,35 @@ export class TableFormModalComponent implements OnInit {
     }
   }
 
-  onSelectionChanged(fld: any, event: any) {
-    this.refreshSelect = false
-    setTimeout(() => {
-      this.formModel[fld.field] = event;
-      this.refreshSelect = true
-    })
-  }
-  
+  async onSelectionChanged(fld: any, event: any) {
+  this.refreshSelect = false;
+  setTimeout(() => {
+    let fieldKey = fld.field;
+    if (fieldKey.includes('department_names')) {
+      fieldKey = 'faculty_department_ids';
+    } else if (fieldKey.includes('level_names')) {
+      fieldKey = 'batch_ids';
+    } else if (fieldKey.includes('_name')) {
+      fieldKey = fieldKey.replace('_name', '');
+    } else if (fieldKey.includes('_names')) {
+      fieldKey = fieldKey.replace('_names', '');
+    }
+    if (fld.multiple === true) {
+      if (!fieldKey.endsWith('_ids')) {
+        fieldKey = fieldKey + '_ids';
+      }
+      this.formModel[fieldKey] = event.map((e: any) => e.id);
+    } else {
+      if (!fieldKey.endsWith('_id')) {
+        fieldKey = fieldKey + '_id';
+      }
+      this.formModel[fieldKey] = event?.id ?? null;
+    }
+    this.refreshSelect = true;
+  });
+}
+
+
   openUploadModal(field: string) {
     this.currField = field;
     this.mediaService.openModal({
@@ -212,6 +239,9 @@ export class TableFormModalComponent implements OnInit {
     this.resetEvents()
   }
 
+  swapForm(){
+    this.isSwapping = !this.isSwapping
+  }
 
 
   

@@ -6,11 +6,12 @@ import { DepartmentsComponent } from './departments/departments.component';
 import { CoursesComponent } from './courses/courses.component';
 import { ApiService } from '../../../../shared/services/api.service';
 import { AcademicLevelsComponent } from "./academic-levels/academic-levels.component";
+import { ProgrammesComponent } from "./programmes/programmes.component";
 
 @Component({
   selector: 'app-academic-structure',
   standalone: true,
-  imports: [TabsComponent, CommonModule, FacultiesComponent, DepartmentsComponent, CoursesComponent, AcademicLevelsComponent],
+  imports: [TabsComponent, CommonModule, FacultiesComponent, DepartmentsComponent, CoursesComponent, AcademicLevelsComponent, ProgrammesComponent],
   templateUrl: './academic-structure.component.html',
   styleUrl: './academic-structure.component.css'
 })
@@ -25,7 +26,11 @@ export class AcademicStructureComponent implements OnInit {
       },
       {
         title: 'Departments',
-        description: 'eg. Dept. Of Sociology'
+        description: 'eg. Dept. Computer Science'
+      },
+      {
+        title: 'Programmes',
+        description: 'eg. IT Business'
       },
       {
         title: 'Academic Levels',
@@ -33,7 +38,7 @@ export class AcademicStructureComponent implements OnInit {
       },
       {
         title: 'Courses',
-        description: "eg. Intro. to Sociology"
+        description: "eg. IT History 101"
       }
     ],
     page: 1

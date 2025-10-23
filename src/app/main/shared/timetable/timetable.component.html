@@ -1,6 +1,310 @@
-    <div>
-        <app-smart-table class="w-full" *ngIf="tableData?.dataSet" [tableData]="tableData"></app-smart-table>
+<div class="p-4 lg:p-6 m-16 max-w-9xl">
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3"
+  >
+    <h2 class="text-2xl font-semibold">My Timetable</h2>
+    <div class="text-sm text-gray-600">
+      Logged in as:
+      <span class="font-medium"
+        >{{ currUser?.firstName }} {{ currUser?.lastName }}</span
+      >
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Timetable -->
+    <div class="col-span-2 bg-white rounded-lg shadow p-4">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2"
+      >
+        <h3 class="text-lg font-medium">This Week’s Classes</h3>
+        <div class="text-xs sm:text-sm text-gray-500 space-x-1">
+          <span class="px-2 py-0.5 rounded bg-yellow-50 text-yellow-700"
+            >Pending</span
+          >
+          <span class="px-2 py-0.5 rounded bg-green-50 text-green-700"
+            >Swapped</span
+          >
+          <span class="px-2 py-0.5 rounded bg-red-50 text-red-700">Missed</span>
+          <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700"
+            >Completed</span
+          >
+          <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700"
+            >Ongoing</span
+          >
+        </div>
+      </div>
+
+      <div
+        *ngIf="fetchedData?.timetables.length === 0"
+        class="text-center py-8 text-gray-500"
+      >
+        No classes this week.
+      </div>
+
+      <ul class="space-y-3">
+        <li
+          *ngFor="let item of fetchedData?.timetables"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border rounded-lg gap-3"
+        >
+          <div>
+            <div class="font-semibold">
+              {{ item?.course?.code }} — {{ item?.course.name }}
+            </div>
+            <div class="text-xs text-gray-500">
+              {{ item?.day }} • {{ item?.startTime }} – {{ item?.endTime }} •
+              {{ item?.location ?? "TBD" }}
+            </div>
+            <div class="mt-1">
+              <span
+                class="inline-block text-xs font-medium px-2 py-0.5 rounded"
+                [ngClass]="{
+                  'bg-yellow-100 text-yellow-700': item?.status==='Pending',
+                  'bg-green-100 text-green-700': item?.status==='Swapped',
+                  'bg-red-100 text-red-700': item?.status==='Missed',
+                  'bg-blue-100 text-blue-700': item?.status==='Completed',
+                  'bg-emerald-100 text-emerald-700': item?.status==='Ongoing'
+                }"
+                >{{ item?.status }}</span
+              >
+            </div>
+            <div
+              class="text-xs text-gray-500 mt-1"
+              *ngIf="item.loggedInAt || item.loggedOutAt"
+            >
+              <div *ngIf="item.loggedInAt">
+                Started: {{ item.loggedInAt | date: "shortTime" }}
+              </div>
+              <div *ngIf="item.loggedOutAt">
+                Ended: {{ item.loggedOutAt | date: "shortTime" }}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button
+              *ngIf="item?.lecturer?.id === currUser?.id && item?.status !== 'Swapped'"
+              (click)="openSwapModal(item)"
+              class="px-3 py-1 rounded bg-emerald-600 text-white text-sm hover:bg-emerald-700"
+            >
+              Request Swap
+            </button>
+            <button
+              (click)="logStart(item)"
+              class="px-2 py-1 text-xs rounded border hover:bg-emerald-50"
+              [disabled]="!!item.loggedInAt"
+            >
+              Start
+            </button>
+            <button
+              (click)="logEnd(item)"
+              class="px-2 py-1 text-xs rounded border hover:bg-orange-50"
+              [disabled]="!item.loggedInAt || !!item.loggedOutAt"
+            >
+              End
+            </button>
+            <button
+              (click)="markCompleted(item)"
+              class="px-2 py-1 text-xs rounded border hover:bg-blue-50"
+            >
+              Completed
+            </button>
+            <button
+              (click)="markMissed(item)"
+              class="px-2 py-1 text-xs rounded border hover:bg-red-50"
+            >
+              Missed
+            </button>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Pagination -->
+      <div
+        class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2"
+      >
+        <div class="text-xs sm:text-sm text-gray-600">
+          Showing {{ (page - 1) * pageSize + 1 }} –
+          {{ Math.min(page * pageSize, fetchedData?.timetables.length) }} of
+          {{ fetchedData?.timetables.length }}
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="prevPage()"
+            [disabled]="page===1"
+            class="px-3 py-1 rounded border disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <div class="px-3 py-1 bg-white border rounded">
+            {{ page }} / {{ totalPages }}
+          </div>
+          <button
+            (click)="nextPage()"
+            [disabled]="page===totalPages"
+            class="px-3 py-1 rounded border disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
 
+    <!-- Sidebar -->
+    <div class="space-y-4">
+      <!-- Incoming requests -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <h4 class="font-medium mb-2">Incoming Swap Requests</h4>
+        <div
+          *ngIf="incomingRequests.length === 0"
+          class="text-sm text-gray-500"
+        >
+          No pending requests.
+        </div>
+        <ul class="space-y-2">
+          <li
+            *ngFor="let r of incomingRequests"
+            class="p-2 border rounded flex flex-col gap-2"
+          >
+            <div class="text-sm">
+              <span class="font-medium">{{ r.lecturer?.firstName }}</span>
+              wants to swap
+              <span class="font-semibold">{{ r.course?.name }}</span>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <button (click)="viewRequest(r)" class="px-3 py-1 rounded border">
+                View
+              </button>
+              <button
+                (click)="approveRequest(r)"
+                class="px-3 py-1 rounded bg-green-600 text-white"
+              >
+                Accept
+              </button>
+              <button
+                (click)="declineRequest(r)"
+                class="px-3 py-1 rounded border text-red-600"
+              >
+                Decline
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
 
-  
+      <!-- Lecturers -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <h4 class="font-medium mb-2">Other Lecturers</h4>
+        <ul class="space-y-1 text-sm text-gray-600">
+          <li
+            *ngFor="let L of fetchedData?.lecturers"
+            class="flex justify-between"
+          >
+            <span>{{ L.firstName }} {{ L.lastName }}</span>
+            <span class="text-xs text-gray-400">{{
+              L.id === currUser.id ? "you" : ""
+            }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Swap Modal -->
+  <div
+    *ngIf="showSwapModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+  >
+    <div
+      class="bg-white rounded-lg shadow max-w-lg w-full p-5"
+      (click)="$event.stopPropagation()"
+    >
+      <h3 class="text-lg font-semibold mb-2">Request swap</h3>
+      <div class="mb-3 text-sm text-gray-700">
+        <div class="font-medium">
+          {{ selectedRequest?.course?.code }} —
+          {{ selectedRequest?.courseTitle }}
+        </div>
+        <div class="text-xs text-gray-500">
+          {{ selectedRequest?.day }} • {{ selectedRequest?.startTime }} –
+          {{ selectedRequest?.endTime }}
+        </div>
+      </div>
+
+      <label class="block text-sm mb-1">Choose lecturer</label>
+      <select [(ngModel)]="swapTargetId" class="w-full p-2 border rounded mb-3">
+        <option [value]="''">-- select --</option>
+        <option
+          *ngFor="let L of fetchedData?.lecturers"
+          [value]="L.id"
+          [disabled]="L.id===currUser.id"
+        >
+          {{ L.firstName }} {{ L.lastName }}
+        </option>
+      </select>
+
+      <label class="block text-sm mb-1">Message (optional)</label>
+      <textarea
+        [(ngModel)]="swapMessage"
+        rows="3"
+        class="w-full p-2 border rounded mb-3"
+      ></textarea>
+
+      <div class="flex justify-end gap-2">
+        <button (click)="closeSwapModal()" class="px-4 py-2 rounded border">
+          Cancel
+        </button>
+        <button
+          (click)="confirmSwapRequest()"
+          [disabled]="!swapTargetId"
+          class="px-4 py-2 rounded bg-emerald-600 text-white"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Request Details Modal -->
+  <div
+    *ngIf="showRequestModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+  >
+    <div class="bg-white rounded-lg shadow max-w-lg w-full p-5">
+      <h3 class="text-lg font-semibold mb-2">Swap Request Details</h3>
+      <p class="text-sm text-gray-700 mb-3">
+        From:
+        <span class="font-medium">{{ selectedRequest?.lecturer?.firstName }}</span>
+      </p>
+      <p class="text-sm text-gray-700 mb-3">
+        Class:
+        <span class="font-medium">{{ selectedRequest?.course?.name }}</span>
+      </p>
+      <p
+        class="text-sm text-gray-700 mb-3"
+        *ngIf="selectedRequest?.message"
+      >
+        Message: "{{ selectedRequest?.message }}"
+      </p>
+
+      <div class="flex justify-end gap-2">
+        <button (click)="closeRequestModal()" class="px-3 py-1 rounded border">
+          Close
+        </button>
+        <button
+          (click)="approveRequest(selectedRequest)"
+          class="px-3 py-1 rounded bg-green-600 text-white"
+        >
+          Accept
+        </button>
+        <button
+          (click)="declineRequest(selectedRequest)"
+          class="px-3 py-1 rounded border text-red-600"
+        >
+          Decline
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
